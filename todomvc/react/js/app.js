@@ -1,12 +1,19 @@
-var items = [
-  {text: 'asdf'},
-  {text: 'qwer'}
-];
-
 var Input = React.createClass({
+  getInitialState: function() {
+    return { newItem: '' };
+  },
+  handleChange: function(e) {
+    this.setState({ newItem: e.target.value });
+  },
+  handleKeyUp: function(e) {
+    if (e.key === 'Enter') {
+      this.props.onNewItem(this.state.newItem.trim());
+      this.setState({ newItem: '' });
+    }
+  },
   render: function() {
     return (
-      <input type='text'></input>
+      <input type='text' value={this.state.newItem} onKeyUp={this.handleKeyUp} onChange={this.handleChange}></input>
     );
   }
 });
@@ -47,19 +54,26 @@ var Footer = React.createClass({
 });
 
 var App = React.createClass({
+  getInitialState: function() {
+    return { items: [] };
+  },
+  handleNewItem:
+  function(newItemText) {
+    this.setState({items: this.state.items.concat({ text: newItemText })});
+  },
   render: function() {
     return (
       <div>
         <h1>todo</h1>
-        <Input />
-        <Items items={this.props.items} />
-        <Footer items={this.props.items} />
+        <Input onNewItem={this.handleNewItem} />
+        <Items items={this.state.items} />
+        <Footer items={this.state.items} />
       </div>
     );
   }
 });
 
 ReactDOM.render(
-  <App items={items} />,
+  <App />,
   document.getElementById('app')
 );
