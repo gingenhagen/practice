@@ -25,6 +25,27 @@ $(function() {
     updateTodo();
   });
 
+  $('.items').on('dblclick', '.item .text', function() {
+    if($(this).closest('.text').hasClass('editing')) { return; }
+
+    $(this).closest('.text').addClass('editing');
+    $(this).find('.editable').focus();
+    $(this).find('.editable').val($(this).find('.editable').val());
+  });
+
+  function onItemEdit() {
+    $(this).closest('.text').find('.readonly').text($(this).val());
+    $(this).closest('.text').removeClass('editing');
+  }
+
+  $('.items').on('keyup', '.item .editable', function() {
+    if (event.which !== 13) { return; }
+
+    onItemEdit.call(this);
+  });
+
+  $('.items').on('blur', '.item .editable', onItemEdit);
+
   $('.items').on('click', '.item .delete', function(){
     removeItem(this);
   });
@@ -43,7 +64,12 @@ $(function() {
   }
 
   function updateTodo() {
-    $('.items-left .count').text(countTodo());
+    if (countTodo() == 1) {
+      $('.items-left').text('1 item left');
+    } else {
+      $('.items-left').text(countTodo() + ' items left');
+    }
+
   }
 
   function countItems() {

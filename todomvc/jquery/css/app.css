@@ -36,23 +36,24 @@ body {
   flex-direction: row;
 }
 
-.item .readonly {
+.text .readonly {
   display: flex;
 }
 
-.item .editable {
+.text .editable {
   display: none;
 }
 
-.item.editing .readonly {
+.text.editing .readonly {
   display: none;
 }
 
-.item.editing .editable {
+.text.editing .editable {
   display: flex;
+  width: 100%;
 }
 
-.item.completed .text {
+.item.completed .readonly {
   text-decoration: line-through;
 }
 
