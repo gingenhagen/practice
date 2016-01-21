@@ -11,7 +11,7 @@ $(function() {
       value: $(this).val()
     });
     $('.items').append(itemHTML);
-    updateDisplay();
+    updateFooter();
 
     $(this).val('');
   });
@@ -22,15 +22,28 @@ $(function() {
     } else {
       $(this).closest('.item').removeClass('completed').addClass('todo');
     }
-    updateCompleted();
+    updateTodo();
   });
 
-  function countCompleted() {
+  $('.items').on('click', '.item .delete', function(){
+    removeItem(this);
+  });
+
+  $('#clear').on('click', function() {
+    $('.item.completed').toArray().forEach(removeItem);
+  });
+
+  function removeItem(target) {
+    $(target).closest('.item').remove();
+    updateFooter();
+  }
+
+  function countTodo() {
     return $('.item.todo').length;
   }
 
-  function updateCompleted() {
-    $('.items-left .count').text(countCompleted());
+  function updateTodo() {
+    $('.items-left .count').text(countTodo());
   }
 
   function countItems() {
@@ -43,11 +56,7 @@ $(function() {
     } else {
       $('.footer').addClass('hidden');
     }
-  }
-
-  function updateDisplay() {
-    updateCompleted();
-    updateFooter();
+    updateTodo();
   }
 
 });

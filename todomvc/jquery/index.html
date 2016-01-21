@@ -21,15 +21,18 @@
           <div class='filter'>Active</div>
           <div class='filter'>Completed</div>
         </div>
-        <button type='button'>Clear completed</button>
+        <button type='button' class='clear' id='clear'>Clear completed</button>
       </div>
     </div>
 
     <script id="item-template" type="text/x-handlebars-template">
       <div class='item todo'>
         <input type='checkbox' class='toggle'></input>
-        <span class='readonly'>{{value}}</span>
-        <input type='text' class='editable' value='{{value}}'></input>
+        <div class='text'>
+          <span class='readonly'>{{value}}</span>
+          <input type='text' class='editable' value='{{value}}'></input>
+        </div>
+        <button type='button' class='delete'>X</button>
       </div>
     </script>
 
