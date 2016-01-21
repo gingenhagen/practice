@@ -68,3 +68,7 @@ body {
 .item .delete {
 
 }
+
+.filter.active {
+  font-weight: bold;
+}

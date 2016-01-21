@@ -11,7 +11,7 @@ $(function() {
       value: $(this).val()
     });
     $('.items').append(itemHTML);
-    updateFooter();
+    refreshDisplay();
 
     $(this).val('');
   });
@@ -22,7 +22,7 @@ $(function() {
     } else {
       $(this).closest('.item').removeClass('completed').addClass('todo');
     }
-    updateTodo();
+    refreshDisplay();
   });
 
   $('.items').on('dblclick', '.item .text', function() {
@@ -54,9 +54,16 @@ $(function() {
     $('.item.completed').toArray().forEach(removeItem);
   });
 
+  $('.filter').on('click', function() {
+    $('.filter').removeClass('active');
+    $(this).addClass('active');
+
+    refreshDisplay();
+  });
+
   function removeItem(target) {
     $(target).closest('.item').remove();
-    updateFooter();
+    refreshDisplay();
   }
 
   function countTodo() {
@@ -69,7 +76,6 @@ $(function() {
     } else {
       $('.items-left').text(countTodo() + ' items left');
     }
-
   }
 
   function countItems() {
@@ -83,6 +89,21 @@ $(function() {
       $('.footer').addClass('hidden');
     }
     updateTodo();
+  }
+
+  function updateItems() {
+    var val = $('.filter.active').val();
+    $('.item').removeClass('hidden');
+    if (val === 'active') {
+      $('.item.completed').addClass('hidden');
+    } else if (val === 'completed') {
+      $('.item.todo').addClass('hidden');
+    }
+  }
+
+  function refreshDisplay() {
+    updateFooter();
+    updateItems();
   }
 
 });
