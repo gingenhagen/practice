@@ -61,7 +61,7 @@ TodoController.prototype.keyupEditingText = function(event) {
 
 TodoController.prototype.blurEditingText = function(event) {
   var target = $(event.target);
-  this.view.stopEditing(target);
+  this.view.stopEditing(target, true);
 };
 
 TodoController.prototype.removeItem = function(event) {
