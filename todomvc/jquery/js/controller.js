@@ -15,7 +15,7 @@ TodoController.prototype.init = function(first_argument) {
 
   this.$ctnItems.on('click',    '.item .toggle',   this.toggleCompleted.bind(this));
   this.$ctnItems.on('dblclick', '.item .text',     this.startEditingText.bind(this));
-  this.$ctnItems.on('keyup',    '.item .editable', this.enterEditingText.bind(this));
+  this.$ctnItems.on('keyup',    '.item .editable', this.keyupEditingText.bind(this));
   this.$ctnItems.on('blur',     '.item .editable', this.blurEditingText.bind(this));
   this.$ctnItems.on('click',    '.item .delete',   this.removeItem.bind(this));
 };
@@ -50,11 +50,13 @@ TodoController.prototype.startEditingText = function(event) {
   this.view.startEditing(target);
 };
 
-TodoController.prototype.enterEditingText = function(event) {
-  if (event.which !== 13) { return; }
-
+TodoController.prototype.keyupEditingText = function(event) {
   var target = $(event.target);
-  this.view.stopEditing(target);
+  if (event.which === 13) { // enter
+    this.view.stopEditing(target, true);
+  } else if (event.which === 27) { // esc
+    this.view.stopEditing(target, false);
+  }
 };
 
 TodoController.prototype.blurEditingText = function(event) {

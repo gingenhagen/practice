@@ -65,12 +65,16 @@ TodoView.prototype.startEditing = function(item) {
   editable.val(editable.val());
 };
 
-TodoView.prototype.stopEditing = function(item) {
+TodoView.prototype.stopEditing = function(item, isSave) {
   var text = item.closest('.text');
   var readonly = text.find('.readonly');
   var editable = text.find('.editable');
 
-  readonly.text(editable.val());
+  if (isSave) {
+    readonly.text(editable.val());
+  } else {
+    editable.val(readonly.text());
+  }
   text.removeClass('editing');
 };
 
