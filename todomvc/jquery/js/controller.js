@@ -6,8 +6,6 @@ function TodoController(view) {
   this.$input = $('#input');
   this.$btnClearCompleted = $('#clear');
   this.$btnFilters = $('.filter');
-
-  this.itemTemplate = Handlebars.compile($("#item-template").html());
 }
 
 TodoController.prototype.init = function(first_argument) {
@@ -30,50 +28,32 @@ TodoController.prototype.inputKeyup = function(event) {
 
   var target = $(event.target);
 
-  var itemHTML = this.itemTemplate({
-    value: target.val()
-  });
-  this.$ctnItems.append(itemHTML);
-  this.view.refreshDisplay();
-
+  this.view.addItem(target.val());
   target.val('');
 };
 
 TodoController.prototype.toggleCompleted = function(event) {
   var target = $(event.target);
-
-  if (target.prop('checked') === true) {
-    target.closest('.item').addClass('completed').removeClass('todo');
-  } else {
-    target.closest('.item').removeClass('completed').addClass('todo');
-  }
-  this.view.refreshDisplay();
+  this.view.setItemCompleted(target, target.prop('checked'));
 };
 
 TodoController.prototype.startEditingText = function(event) {
   var target = $(event.currentTarget);
-  if(target.closest('.text').hasClass('editing')) { return; }
 
-  target.closest('.text').addClass('editing');
-  target.find('.editable').focus();
-  target.find('.editable').val(target.find('.editable').val());
+  if (this.view.isEditing(target)) { return; }
+  this.view.startEditing(target);
 };
 
 TodoController.prototype.enterEditingText = function(event) {
   if (event.which !== 13) { return; }
 
   var target = $(event.target);
-  this.onItemEdit(target);
+  this.view.stopEditing(target);
 };
 
 TodoController.prototype.blurEditingText = function(event) {
   var target = $(event.target);
-  this.onItemEdit(target);
-};
-
-TodoController.prototype.onItemEdit = function(target) {
-  target.closest('.text').find('.readonly').text(target.val());
-  target.closest('.text').removeClass('editing');
+  this.view.stopEditing(target);
 };
 
 TodoController.prototype.removeItem = function(event) {
@@ -82,14 +62,10 @@ TodoController.prototype.removeItem = function(event) {
 };
 
 TodoController.prototype.clearCompleted = function() {
-  this.itemsCompleted().toArray().forEach(this.view.removeItem.bind(this.view));
+  this.view.removeItemsCompleted();
 };
 
 TodoController.prototype.changeFilter = function(event) {
   var target = $(event.target);
-
-  $('.filter').removeClass('active');
-  target.addClass('active');
-
-  this.view.refreshDisplay();
+  this.view.setFilter(target.val());
 };
