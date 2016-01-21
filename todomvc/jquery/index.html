@@ -14,8 +14,8 @@
       <div class='items'>
 
       </div>
-      <div class='footer'>
-        <div class='items-left'><span class='count'>X</span> items left</div>
+      <div class='footer hidden'>
+        <div class='items-left'><span class='count'>0</span> items left</div>
         <div class='filters'>
           <div class='filter active'>All</div>
           <div class='filter'>Active</div>
@@ -26,7 +26,7 @@
     </div>
 
     <script id="item-template" type="text/x-handlebars-template">
-      <div class='item'>
+      <div class='item todo'>
         <input type='checkbox' class='toggle'></input>
         <span class='readonly'>{{value}}</span>
         <input type='text' class='editable' value='{{value}}'></input>
