@@ -10,17 +10,14 @@ function TodoController(view) {
 
 TodoController.prototype.init = function(first_argument) {
   this.$input.on('keyup', this.inputKeyup.bind(this));
-  this.$ctnItems.on('click', '.item .toggle', this.toggleCompleted.bind(this));
-  this.$ctnItems.on('dblclick', '.item .text', this.startEditingText.bind(this));
-  this.$ctnItems.on('keyup', '.item .editable', this.enterEditingText.bind(this));
-  this.$ctnItems.on('blur', '.item .editable', this.blurEditingText.bind(this));
-  this.$ctnItems.on('click', '.item .delete', this.removeItem.bind(this));
   this.$btnClearCompleted.on('click', this.clearCompleted.bind(this));
   this.$btnFilters.on('click', this.changeFilter.bind(this));
-};
 
-TodoController.prototype.itemsCompleted = function() {
-  return $('.item.completed');
+  this.$ctnItems.on('click',    '.item .toggle',   this.toggleCompleted.bind(this));
+  this.$ctnItems.on('dblclick', '.item .text',     this.startEditingText.bind(this));
+  this.$ctnItems.on('keyup',    '.item .editable', this.enterEditingText.bind(this));
+  this.$ctnItems.on('blur',     '.item .editable', this.blurEditingText.bind(this));
+  this.$ctnItems.on('click',    '.item .delete',   this.removeItem.bind(this));
 };
 
 TodoController.prototype.inputKeyup = function(event) {
@@ -30,6 +27,15 @@ TodoController.prototype.inputKeyup = function(event) {
 
   this.view.addItem(target.val());
   target.val('');
+};
+
+TodoController.prototype.clearCompleted = function() {
+  this.view.removeItemsCompleted();
+};
+
+TodoController.prototype.changeFilter = function(event) {
+  var target = $(event.target);
+  this.view.setFilter(target.val());
 };
 
 TodoController.prototype.toggleCompleted = function(event) {
@@ -59,13 +65,4 @@ TodoController.prototype.blurEditingText = function(event) {
 TodoController.prototype.removeItem = function(event) {
   var target = $(event.target);
   this.view.removeItem(target);
-};
-
-TodoController.prototype.clearCompleted = function() {
-  this.view.removeItemsCompleted();
-};
-
-TodoController.prototype.changeFilter = function(event) {
-  var target = $(event.target);
-  this.view.setFilter(target.val());
 };

@@ -21,7 +21,9 @@ TodoView.prototype.itemsLeft = function() {
   return $('.items-left');
 };
 
-// functions to modify the item list
+///////////////////////////////////////
+// functions to modify the item list //
+///////////////////////////////////////
 
 TodoView.prototype.addItem = function(value) {
   var itemHTML = this.itemTemplate({value: value});
@@ -38,7 +40,7 @@ TodoView.prototype.setItemCompleted = function(_item, isCompleted) {
   var item = _item.closest('.item');
 
   if (isCompleted) {
-    item.addClass('completed').removeClass('todo');
+    item.removeClass('todo').addClass('completed');
   } else {
     item.removeClass('completed').addClass('todo');
   }
@@ -78,7 +80,9 @@ TodoView.prototype.setFilter = function(type) {
   this.refreshDisplay();
 };
 
-// functions to update the display
+/////////////////////////////////////
+// functions to update the display //
+/////////////////////////////////////
 
 TodoView.prototype.countItems = function() {
   return this.items().length;
@@ -92,14 +96,6 @@ TodoView.prototype.countItemsTodo = function() {
   return this.itemsTodo().length;
 };
 
-TodoView.prototype.updateTodo = function() {
-  if (this.countItemsTodo() == 1) {
-    this.itemsLeft().text('1 item left');
-  } else {
-    this.itemsLeft().text(this.countItemsTodo() + ' items left');
-  }
-};
-
 TodoView.prototype.updateItems = function() {
   var val = $('.filter.active').val();
   this.items().removeClass('hidden');
@@ -107,6 +103,14 @@ TodoView.prototype.updateItems = function() {
     this.itemsCompleted().addClass('hidden');
   } else if (val === 'completed') {
     this.itemsTodo().addClass('hidden');
+  }
+};
+
+TodoView.prototype.updateTodo = function() {
+  if (this.countItemsTodo() == 1) {
+    this.itemsLeft().text('1 item left');
+  } else {
+    this.itemsLeft().text(this.countItemsTodo() + ' items left');
   }
 };
 
