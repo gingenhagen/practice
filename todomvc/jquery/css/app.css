@@ -3,9 +3,45 @@ body {
 }
 
 .app {
-  width: 100%;
-  max-width: 400px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 100px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.footer {
+  display: flex;
+  flex-direction: row;
+}
+
+.filters {
+  display: flex;
+  flex-direction: row;
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+}
+
+.item .readonly {
+  display: flex;
+}
+
+.item .editable {
+  display: none;
+}
+
+.item.editing .readonly {
+  display: none;
+}
+
+.item.editing .editable {
+  display: flex;
+}
+
+.item.completed {
+  text-decoration: line-through;
 }
