@@ -82,6 +82,10 @@ $(function() {
     return $('.item').length;
   }
 
+  function countCompleted() {
+    return $('.item.completed').length;
+  }
+
   function updateFooter() {
     if (countItems() > 0) {
       $('.footer').removeClass('hidden');
@@ -89,6 +93,7 @@ $(function() {
       $('.footer').addClass('hidden');
     }
     updateTodo();
+    updateCompleted();
   }
 
   function updateItems() {
@@ -98,6 +103,14 @@ $(function() {
       $('.item.completed').addClass('hidden');
     } else if (val === 'completed') {
       $('.item.todo').addClass('hidden');
+    }
+  }
+
+  function updateCompleted() {
+    if (countCompleted() > 0) {
+      $('.clear').removeClass('hidden');
+    } else {
+      $('.clear').addClass('hidden');
     }
   }
 
