@@ -1,10 +1,5 @@
 function TodoView() {
-  this.$items = $('.item');
-  this.$itemTodo = $('.item.todo');
-  this.$itemsCompleted = $('.item.completed');
-  this.$itemsLeft = $('.items-left');
   this.$footer = $('.footer');
-  this.$filterActive = $('.filter.active');
   this.$btnClear = $('.clear');
 }
 
@@ -12,53 +7,73 @@ TodoView.prototype.init = function(first_argument) {
 
 };
 
+TodoView.prototype.items = function() {
+  return $('.item');
+};
+
+TodoView.prototype.itemsTodo = function() {
+  return $('.item.todo');
+};
+
+TodoView.prototype.itemsCompleted = function() {
+  return $('.item.completed');
+};
+
+TodoView.prototype.itemsLeft = function() {
+  return $('.items-left');
+};
+
+TodoView.prototype.filterActive = function() {
+  return $('.filter.active');
+};
+
 TodoView.prototype.removeItem = function(target) {
   $(target).closest('.item').remove();
-  refreshDisplay();
+  this.refreshDisplay();
 };
 
 TodoView.prototype.countTodo = function() {
-  return this.$items.length;
+  return this.itemsTodo().length;
 };
 
 TodoView.prototype.updateTodo = function() {
-  if (countTodo() == 1) {
-    this.$itemsLeft.text('1 item left');
+  if (this.countTodo() == 1) {
+    this.itemsLeft().text('1 item left');
   } else {
-    this.$itemsLeft.text(countTodo() + ' items left');
+    this.itemsLeft().text(this.countTodo() + ' items left');
   }
 };
 
 TodoView.prototype.countItems = function() {
-  return this.$items.length;
+  return this.items().length;
 };
 
 TodoView.prototype.countCompleted = function() {
-  return this.$itemsCompleted.length;
+  return this.itemsCompleted().length;
 };
 
 TodoView.prototype.updateFooter = function() {
-  if (countItems() > 0) {
+  if (this.countItems() > 0) {
     this.$footer.removeClass('hidden');
   } else {
     this.$footer.addClass('hidden');
   }
-  updateTodo();
-  updateCompleted();
+  this.updateTodo();
+  this.updateCompleted();
 };
 
 TodoView.prototype.updateItems = function() {
-  var val = this.$filterActive.val();
-  this.$items.removeClass('hidden');
+  var val = this.filterActive().val();
+  this.items().removeClass('hidden');
   if (val === 'active') {
-    this.$itemsCompleted.addClass('hidden');
+    this.itemsCompleted().addClass('hidden');
   } else if (val === 'completed') {
-    this.$itemsTodo.addClass('hidden');
+    this.itemsTodo().addClass('hidden');
   }
 };
 
 TodoView.prototype.updateCompleted = function() {
-  if (countCompleted() > 0) {
+  if (this.countCompleted() > 0) {
     this.$btnClear.removeClass('hidden');
   } else {
     this.$btnClear.addClass('hidden');
@@ -66,6 +81,6 @@ TodoView.prototype.updateCompleted = function() {
 };
 
 TodoView.prototype.refreshDisplay = function() {
-  updateFooter();
-  updateItems();
+  this.updateFooter();
+  this.updateItems();
 };

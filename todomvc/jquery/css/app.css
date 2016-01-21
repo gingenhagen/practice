@@ -29,11 +29,15 @@ h1 {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  position: relative;
 }
 
 .filters {
   display: flex;
   flex-direction: row;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .item {
