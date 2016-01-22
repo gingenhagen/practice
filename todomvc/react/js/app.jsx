@@ -1,7 +1,7 @@
 var Input = React.createClass({
   handleKeyUp: function(e) {
     if (e.key === 'Enter') {
-      this.props.onNewItem(e.target.value.trim());
+      this.props.onNewItem({id: _.uniqueId(), text: e.target.value.trim()});
       e.target.value = '';
     }
   },
@@ -13,13 +13,51 @@ var Input = React.createClass({
 });
 
 var Item = React.createClass({
+  getInitialState: function() {
+    return { editing: false, editedText: this.props.text };
+  },
+  textClassName: function() {
+    return 'text ' + (this.state.editing ? 'editing' : '');
+  },
+  handleChangeEditedText: function(e) {
+    this.setState({ editedText: e.target.value })
+  },
+  handleDoubleClick: function() {
+    if (!this.state.editing) {
+      this.setState({editing: true});
+
+      // TODO: doesn't seem to trigger properly
+      // this.editableInput.value = this.editableInput.value;
+      // this.editableInput.focus();
+    }
+  },
+  handleKeyUp: function(e) {
+    if (e.key === 'Enter') {
+      this.props.onEditText({ id: this.props.id, text: e.target.value })
+      this.setState({editing: false});
+    } else if (e.key === 'Escape') {
+      this.setState({editing: false});
+      this.setState({ editedText: this.props.text });
+    }
+  },
+  handleBlur: function(e) {
+    this.props.onEditText({ id: this.props.id, text: e.target.value })
+    this.setState({editing: false});
+  },
   render: function() {
     return (
       <div className='item'>
         <input type='checkbox'></input>
-        <div className='text'>
+        <div className={this.textClassName()} onDoubleClick={this.handleDoubleClick}>
           <span className='readonly'>{this.props.text}</span>
-          <input type='text' className='editable' value={this.props.text}></input>
+          <input type='text'
+            className='editable'
+            value={this.state.editedText}
+            onChange={this.handleChangeEditedText}
+            ref={(ref) => this.editableInput = ref}
+            onKeyUp={this.handleKeyUp}
+            onBlur={this.handleBlur}
+          ></input>
         </div>
         <button type='button'>X</button>
       </div>
@@ -28,12 +66,15 @@ var Item = React.createClass({
 });
 
 var Items = React.createClass({
+  handleEditText: function() {
+    this.props.onEditText.apply(this, arguments);
+  },
   render: function() {
     var items = this.props.items.map(function(item) {
       return (
-        <Item text={item.text} />
+        <Item key={item.id} id={item.id} text={item.text} onEditText={this.handleEditText}  />
       )
-    });
+    }.bind(this));
     return (
       <div className='items'>
         {items}
@@ -115,18 +156,29 @@ var App = React.createClass({
       filter: 'all'
     };
   },
-  handleNewItem: function(newItemText) {
-    this.setState({items: this.state.items.concat({ text: newItemText })});
+  handleNewItem: function(newItem) {
+    this.setState({ items: this.state.items.concat(newItem) });
   },
   handleChangeFilter: function(filter) {
-    this.setState({filter: filter});
+    this.setState({ filter: filter });
+  },
+  handleEditText: function(editedItem) {
+    this.setState({ items: this.state.items.map(
+      function(currentValue, index, array) {
+        if (currentValue.id === editedItem.id) {
+          return { id: editedItem.id, text: editedItem.text };
+        } else {
+          return currentValue;
+        }
+      })
+    });
   },
   render: function() {
     return (
       <div>
         <h1>todo</h1>
         <Input onNewItem={this.handleNewItem} />
-        <Items items={this.state.items} />
+        <Items items={this.state.items} onEditText={this.handleEditText} />
         <Footer items={this.state.items} onChangeFilter={this.handleChangeFilter} filter={this.state.filter} />
       </div>
     );
