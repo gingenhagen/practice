@@ -48,13 +48,12 @@ var Item = React.createClass({
     this.props.onRemoveItem(this.props.id);
   },
   handleChangeCompleted: function(e) {
-    debugger;
     this.props.onChangeCompleted({ id: this.props.id, completed: e.target.checked })
   },
   render: function() {
     return (
       <div className='item'>
-        <input type='checkbox' value={this.props.completed} onChange={this.handleChangeCompleted}></input>
+        <input type='checkbox' checked={this.props.completed} onChange={this.handleChangeCompleted}></input>
         <div className={this.textClassName()} onDoubleClick={this.handleDoubleClick}>
           <span className='readonly'>{this.props.text}</span>
           <input type='text'
@@ -83,9 +82,18 @@ var Items = React.createClass({
     this.props.onChangeCompleted.apply(this, arguments);
   },
   render: function() {
-    var items = this.props.items.map(function(item) {
+    var filter = this.props.filter;
+    var items = this.props.items.filter(function(item) {
+      if (filter === 'active') {
+        return !item.completed;
+      } else if (filter === 'completed') {
+        return item.completed;
+      } else {
+        return true;
+      }
+    }).map(function(item) {
       return (
-        <Item key={item.id} id={item.id} text={item.text}
+        <Item key={item.id} id={item.id} text={item.text} completed={item.completed}
           onEditText={this.handleEditText}
           onRemoveItem={this.handleRemoveItem}
           onChangeCompleted={this.handleChangeCompleted}
@@ -102,10 +110,11 @@ var Items = React.createClass({
 
 var ItemsLeft = React.createClass({
   itemsLeftText: function() {
-    if (this.props.items.length === 1) {
+    var itemsNotCompleted = this.props.items.filter(function(item){ return item.completed === false; });
+    if (itemsNotCompleted.length === 1) {
       return '1 item left';
     } else {
-      return this.props.items.length + " items left";
+      return itemsNotCompleted.length + " items left";
     }
   },
   render: function() {
@@ -153,9 +162,12 @@ var ItemsFilter = React.createClass({
 });
 
 var ClearCompleted = React.createClass({
+  handleClick: function() {
+    this.props.onClearCompleted();
+  },
   render: function() {
     return (
-      <button type='button'>Clear completed</button>
+      <button type='button' onClick={this.handleClick}>Clear completed</button>
     )
   }
 });
@@ -164,12 +176,15 @@ var Footer = React.createClass({
   handleChangeFilter: function() {
     this.props.onChangeFilter.apply(this, arguments);
   },
+  handleClearCompleted: function() {
+    this.props.onClearCompleted.apply(this, arguments);
+  },
   render: function() {
     return (
       <div className='footer'>
         <ItemsLeft items={this.props.items} />
         <ItemsFilter filter={this.props.filter} onChangeFilter={this.handleChangeFilter} />
-        <ClearCompleted items={this.props.items} />
+        <ClearCompleted items={this.props.items} onClearCompleted={this.handleClearCompleted} />
       </div>
     )
   }
@@ -221,18 +236,27 @@ var App = React.createClass({
       }
     )});
   },
+  handleClearCompleted: function() {
+    this.setState({ items: this.state.items.filter(
+      function(element, index, array) {
+        return !element.completed;
+      })
+    });
+  },
   render: function() {
     return (
       <div>
         <h1>todo</h1>
         <Input onNewItem={this.handleNewItem} />
         <Items items={this.state.items}
+          filter={this.state.filter}
           onEditText={this.handleEditText}
           onRemoveItem={this.handleRemoveItem}
           onChangeCompleted={this.handleChangeCompleted}
         />
         <Footer items={this.state.items} filter={this.state.filter}
           onChangeFilter={this.handleChangeFilter}
+          onClearCompleted={this.handleClearCompleted}
         />
       </div>
     );
