@@ -25,10 +25,14 @@ var Item = React.createClass({
   handleDoubleClick: function() {
     if (!this.state.editing) {
       this.setState({editing: true});
-
-      // TODO: doesn't seem to trigger properly
-      // this.editableInput.value = this.editableInput.value;
-      // this.editableInput.focus();
+      // can't set the focus here, since the redraw hasn't happened yet
+      // need to wait till componentDidUpdate
+    }
+  },
+  componentDidUpdate: function() {
+    if (this.state.editing) {
+      this.editableInput.value = this.editableInput.value;
+      this.editableInput.focus();
     }
   },
   handleKeyUp: function(e) {
