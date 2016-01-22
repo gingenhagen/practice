@@ -7,4 +7,4 @@ Going to practice
 * flexbox
 
 Version when it was just in one file:
-https://github.com/gingenhagen/practice/tree/958b11d3546c2bf5922e354b5b9bbe890071eccb
+https://github.com/gingenhagen/practice/tree/958b11d3546c2bf5922e354b5b9bbe890071eccb/todomvc/jquery
