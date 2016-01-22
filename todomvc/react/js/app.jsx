@@ -24,7 +24,7 @@ var Item = React.createClass({
   },
   handleDoubleClick: function() {
     if (!this.state.editing) {
-      this.setState({editing: true});
+      this.setState({ editing: true });
       // can't set the focus here, since the redraw hasn't happened yet
       // need to wait till componentDidUpdate
     }
@@ -40,8 +40,8 @@ var Item = React.createClass({
       this.props.onEditItem({ id: this.props.id, text: e.target.value })
       this.setState({ editing: false });
     } else if (e.key === 'Escape') {
-      this.setState({ editing: false });
       this.setState({ editedText: this.props.text });
+      this.setState({ editing: false });
     }
   },
   handleBlur: function(e) {
@@ -62,9 +62,9 @@ var Item = React.createClass({
           <span className='readonly'>{this.props.text}</span>
           <input type='text'
             className='editable'
+            ref={(ref) => this.editableInput = ref}
             value={this.state.editedText}
             onChange={this.handleChangeEditedText}
-            ref={(ref) => this.editableInput = ref}
             onKeyUp={this.handleKeyUp}
             onBlur={this.handleBlur}
           ></input>
@@ -76,20 +76,11 @@ var Item = React.createClass({
 });
 
 var Items = React.createClass({
-  handleEditItem: function() {
-    this.props.onEditItem.apply(this, arguments);
-  },
-  handleRemoveItem: function() {
-    this.props.onRemoveItem.apply(this, arguments);
-  },
   render: function() {
     var filter = this.props.filter;
     var items = this.props.items.filter(filter).map(function(item) {
       return (
-        <Item key={item.id} id={item.id} text={item.text} completed={item.completed}
-          onEditItem={this.handleEditItem}
-          onRemoveItem={this.handleRemoveItem}
-        />
+        <Item {...this.props} key={item.id} id={item.id} text={item.text} completed={item.completed} />
       )
     }.bind(this));
     return (
@@ -102,10 +93,11 @@ var Items = React.createClass({
 
 var ItemsLeft = React.createClass({
   itemsLeftText: function() {
-    if (this.props.items.active().length === 1) {
+    var itemsLeft = this.props.items.active().length;
+    if (itemsLeft === 1) {
       return '1 item left';
     } else {
-      return this.props.items.active().length + " items left";
+      return itemsLeft + " items left";
     }
   },
   render: function() {
@@ -115,7 +107,7 @@ var ItemsLeft = React.createClass({
   }
 });
 
-var ItemsFilter = React.createClass({
+var Filter = React.createClass({
   filterClass: function(forFilterType) {
     if (this.props.filter === forFilterType) {
       return 'filter active';
@@ -123,30 +115,26 @@ var ItemsFilter = React.createClass({
       return 'filter';
     }
   },
-  handleFilterAll: function() {
-    this.props.onChangeFilter('all');
-  },
-  handleFilterActive: function() {
-    this.props.onChangeFilter('active');
-  },
-  handleFilterCompleted: function() {
-    this.props.onChangeFilter('completed');
+  handleChangeFilter: function() {
+    this.props.onChangeFilter(this.props.filterType);
   },
   render: function() {
     return (
+      <button type='button'
+        className={this.filterClass(this.props.filterType)}
+        onClick={this.handleChangeFilter}
+      >{_.capitalize(this.props.filterType)}</button>
+    )
+  }
+})
+
+var ItemsFilter = React.createClass({
+  render: function() {
+    return (
       <div className='filters'>
-        <button type='button'
-          className={this.filterClass('all')}
-          onClick={this.handleFilterAll}
-        >All</button>
-        <button type='button'
-          className={this.filterClass('active')}
-          onClick={this.handleFilterActive}
-        >Active</button>
-        <button type='button'
-          className={this.filterClass('completed')}
-          onClick={this.handleFilterCompleted}
-        >Completed</button>
+        <Filter {...this.props} filterType='all' />
+        <Filter {...this.props} filterType='active' />
+        <Filter {...this.props} filterType='completed' />
       </div>
     )
   }
@@ -164,18 +152,12 @@ var ClearCompleted = React.createClass({
 });
 
 var Footer = React.createClass({
-  handleChangeFilter: function() {
-    this.props.onChangeFilter.apply(this, arguments);
-  },
-  handleClearCompleted: function() {
-    this.props.onClearCompleted.apply(this, arguments);
-  },
   render: function() {
     return this.props.items.all().length > 0 ? (
       <div className='footer'>
-        <ItemsLeft items={this.props.items} />
-        <ItemsFilter filter={this.props.filter} onChangeFilter={this.handleChangeFilter} />
-        <ClearCompleted items={this.props.items} onClearCompleted={this.handleClearCompleted} />
+        <ItemsLeft {...this.props} />
+        <ItemsFilter {...this.props} />
+        <ClearCompleted {...this.props} />
       </div>
     ) : null;
   }
