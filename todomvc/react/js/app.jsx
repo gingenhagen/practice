@@ -1,19 +1,13 @@
 var Input = React.createClass({
-  getInitialState: function() {
-    return { newItem: '' };
-  },
-  handleChange: function(e) {
-    this.setState({ newItem: e.target.value });
-  },
   handleKeyUp: function(e) {
     if (e.key === 'Enter') {
-      this.props.onNewItem(this.state.newItem.trim());
-      this.setState({ newItem: '' });
+      this.props.onNewItem(e.target.value.trim());
+      e.target.value = '';
     }
   },
   render: function() {
     return (
-      <input type='text' className='input' value={this.state.newItem} onKeyUp={this.handleKeyUp} onChange={this.handleChange}></input>
+      <input type='text' className='input' onKeyUp={this.handleKeyUp}></input>
     );
   }
 });
