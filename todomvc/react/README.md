@@ -6,4 +6,4 @@ Going to practice
 * react
 
 Version when it was just in one file:
-https://github.com/gingenhagen/practice/tree/cdd8ed9f57b4e1b8c9e860a22b8624cf2ec0e94b
+https://github.com/gingenhagen/practice/tree/e7231585520840eadd64f3411ba836acd7756c7a
