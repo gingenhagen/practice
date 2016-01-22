@@ -114,7 +114,7 @@ var Items = React.createClass({
 
 var ItemsLeft = React.createClass({
   itemsLeftText: function() {
-    var itemsNotCompleted = this.props.items.filter(function(item){ return item.completed === false; });
+    var itemsNotCompleted = this.props.items.filter(function(item){ return !item.completed; });
     if (itemsNotCompleted.length === 1) {
       return '1 item left';
     } else {
@@ -170,9 +170,10 @@ var ClearCompleted = React.createClass({
     this.props.onClearCompleted();
   },
   render: function() {
-    return (
+    var itemsCompleted = this.props.items.filter(function(item){ return item.completed; });
+    return itemsCompleted.length > 0 ? (
       <button type='button' onClick={this.handleClick}>Clear completed</button>
-    )
+    ) : null;
   }
 });
 
@@ -184,13 +185,14 @@ var Footer = React.createClass({
     this.props.onClearCompleted.apply(this, arguments);
   },
   render: function() {
-    return (
+    var items = this.props.items;
+    return items.length > 0 ? (
       <div className='footer'>
         <ItemsLeft items={this.props.items} />
         <ItemsFilter filter={this.props.filter} onChangeFilter={this.handleChangeFilter} />
         <ClearCompleted items={this.props.items} onClearCompleted={this.handleClearCompleted} />
       </div>
-    )
+    ) : null;
   }
 });
 
