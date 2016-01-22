@@ -7,7 +7,7 @@ var Input = React.createClass({
   },
   render: function() {
     return (
-      <input type='text' className='input' onKeyUp={this.handleKeyUp}></input>
+      <input type='text' className='input' onKeyUp={this.handleKeyUp} />
     );
   }
 });
@@ -15,12 +15,6 @@ var Input = React.createClass({
 var Item = React.createClass({
   getInitialState: function() {
     return { editing: false, editedText: this.props.text };
-  },
-  textClassName: function() {
-    return 'text ' + (this.state.editing ? 'editing' : '');
-  },
-  handleChangeEditedText: function(e) {
-    this.setState({ editedText: e.target.value })
   },
   handleDoubleClick: function() {
     if (!this.state.editing) {
@@ -35,6 +29,9 @@ var Item = React.createClass({
       this.editableInput.focus();
     }
   },
+  handleChangeEditedText: function(e) {
+    this.setState({ editedText: e.target.value })
+  },
   handleKeyUp: function(e) {
     if (e.key === 'Enter') {
       this.props.onEditItem({ id: this.props.id, text: e.target.value })
@@ -46,28 +43,25 @@ var Item = React.createClass({
   },
   handleBlur: function(e) {
     this.props.onEditItem({ id: this.props.id, text: e.target.value })
-    this.setState({editing: false});
+    this.setState({ editing: false });
   },
   handleRemoveItem: function() {
     this.props.onRemoveItem(this.props.id);
   },
   handleChangeCompleted: function(e) {
-    this.props.onEditItem({ id: this.props.id, completed: e.target.checked })
+    this.props.onEditItem({ id: this.props.id, completed: e.target.checked });
   },
   render: function() {
     return (
       <div className='item'>
-        <input type='checkbox' checked={this.props.completed} onChange={this.handleChangeCompleted}></input>
-        <div className={this.textClassName()} onDoubleClick={this.handleDoubleClick}>
+        <input type='checkbox' checked={this.props.completed} onChange={this.handleChangeCompleted} />
+        <div className={classNames('text', {'editing': this.state.editing})} onDoubleClick={this.handleDoubleClick}>
           <span className='readonly'>{this.props.text}</span>
-          <input type='text'
-            className='editable'
+          <input type='text' className='editable' value={this.state.editedText}
             ref={(ref) => this.editableInput = ref}
-            value={this.state.editedText}
             onChange={this.handleChangeEditedText}
             onKeyUp={this.handleKeyUp}
-            onBlur={this.handleBlur}
-          ></input>
+            onBlur={this.handleBlur} />
         </div>
         <button type='button' onClick={this.handleRemoveItem}>X</button>
       </div>
@@ -93,12 +87,8 @@ var Items = React.createClass({
 
 var ItemsLeft = React.createClass({
   itemsLeftText: function() {
-    var itemsLeft = this.props.items.active().length;
-    if (itemsLeft === 1) {
-      return '1 item left';
-    } else {
-      return itemsLeft + " items left";
-    }
+    var count = this.props.items.active().length;
+    return count === 1 ?  '1 item left' : (count + ' items left');
   },
   render: function() {
     return (
@@ -108,25 +98,18 @@ var ItemsLeft = React.createClass({
 });
 
 var Filter = React.createClass({
-  filterClass: function(forFilterType) {
-    if (this.props.filter === forFilterType) {
-      return 'filter active';
-    } else {
-      return 'filter';
-    }
-  },
   handleChangeFilter: function() {
     this.props.onChangeFilter(this.props.filterType);
   },
   render: function() {
     return (
       <button type='button'
-        className={this.filterClass(this.props.filterType)}
+        className={classNames('filter', {'active': this.props.filter === this.props.filterType})}
         onClick={this.handleChangeFilter}
       >{_.capitalize(this.props.filterType)}</button>
     )
   }
-})
+});
 
 var ItemsFilter = React.createClass({
   render: function() {
