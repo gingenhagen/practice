@@ -37,22 +37,22 @@ var Item = React.createClass({
   },
   handleKeyUp: function(e) {
     if (e.key === 'Enter') {
-      this.props.onEditText({ id: this.props.id, text: e.target.value })
-      this.setState({editing: false});
+      this.props.onEditItem({ id: this.props.id, text: e.target.value })
+      this.setState({ editing: false });
     } else if (e.key === 'Escape') {
-      this.setState({editing: false});
+      this.setState({ editing: false });
       this.setState({ editedText: this.props.text });
     }
   },
   handleBlur: function(e) {
-    this.props.onEditText({ id: this.props.id, text: e.target.value })
+    this.props.onEditItem({ id: this.props.id, text: e.target.value })
     this.setState({editing: false});
   },
   handleRemoveItem: function() {
     this.props.onRemoveItem(this.props.id);
   },
   handleChangeCompleted: function(e) {
-    this.props.onChangeCompleted({ id: this.props.id, completed: e.target.checked })
+    this.props.onEditItem({ id: this.props.id, completed: e.target.checked })
   },
   render: function() {
     return (
@@ -76,31 +76,19 @@ var Item = React.createClass({
 });
 
 var Items = React.createClass({
-  handleEditText: function() {
-    this.props.onEditText.apply(this, arguments);
+  handleEditItem: function() {
+    this.props.onEditItem.apply(this, arguments);
   },
   handleRemoveItem: function() {
     this.props.onRemoveItem.apply(this, arguments);
   },
-  handleChangeCompleted: function() {
-    this.props.onChangeCompleted.apply(this, arguments);
-  },
   render: function() {
     var filter = this.props.filter;
-    var items = this.props.items.filter(function(item) {
-      if (filter === 'active') {
-        return !item.completed;
-      } else if (filter === 'completed') {
-        return item.completed;
-      } else {
-        return true;
-      }
-    }).map(function(item) {
+    var items = this.props.items.filter(filter).map(function(item) {
       return (
         <Item key={item.id} id={item.id} text={item.text} completed={item.completed}
-          onEditText={this.handleEditText}
+          onEditItem={this.handleEditItem}
           onRemoveItem={this.handleRemoveItem}
-          onChangeCompleted={this.handleChangeCompleted}
         />
       )
     }.bind(this));
@@ -114,11 +102,10 @@ var Items = React.createClass({
 
 var ItemsLeft = React.createClass({
   itemsLeftText: function() {
-    var itemsNotCompleted = this.props.items.filter(function(item){ return !item.completed; });
-    if (itemsNotCompleted.length === 1) {
+    if (this.props.items.active().length === 1) {
       return '1 item left';
     } else {
-      return itemsNotCompleted.length + " items left";
+      return this.props.items.active().length + " items left";
     }
   },
   render: function() {
@@ -170,8 +157,7 @@ var ClearCompleted = React.createClass({
     this.props.onClearCompleted();
   },
   render: function() {
-    var itemsCompleted = this.props.items.filter(function(item){ return item.completed; });
-    return itemsCompleted.length > 0 ? (
+    return this.props.items.completed().length > 0 ? (
       <button type='button' onClick={this.handleClick}>Clear completed</button>
     ) : null;
   }
@@ -185,8 +171,7 @@ var Footer = React.createClass({
     this.props.onClearCompleted.apply(this, arguments);
   },
   render: function() {
-    var items = this.props.items;
-    return items.length > 0 ? (
+    return this.props.items.all().length > 0 ? (
       <div className='footer'>
         <ItemsLeft items={this.props.items} />
         <ItemsFilter filter={this.props.filter} onChangeFilter={this.handleChangeFilter} />
@@ -199,66 +184,33 @@ var Footer = React.createClass({
 var App = React.createClass({
   getInitialState: function() {
     return {
-      items: [],
+      items: new TodoModel([]),
       filter: 'all'
     };
   },
-  handleNewItem: function(newItemText) {
-    this.setState({ items: this.state.items.concat({
-      id: _.uniqueId(),
-      text: newItemText,
-      completed: false
-    }) });
+  handleNewItem: function(text) {
+    this.setState({ items: this.state.items.add(text) });
   },
   handleChangeFilter: function(filter) {
     this.setState({ filter: filter });
   },
-  handleEditText: function(editedItem) {
-    this.setState({ items: this.state.items.map(
-      function(currentValue, index, array) {
-        if (currentValue.id === editedItem.id) {
-          return _.merge({}, currentValue, { text: editedItem.text });
-        } else {
-          return currentValue;
-        }
-      })
-    });
+  handleEditItem: function(item) {
+    this.setState({ items: this.state.items.merge(item) });
   },
   handleRemoveItem: function(id) {
-    this.setState({ items: this.state.items.filter(
-      function(element, index, array) {
-        return element.id !== id;
-      })
-    });
-  },
-  handleChangeCompleted: function(completedItem) {
-    this.setState({ items: this.state.items.map(
-      function(currentValue, index, array) {
-        if(currentValue.id === completedItem.id) {
-          return _.merge({}, currentValue, { completed: completedItem.completed });
-        } else {
-          return currentValue;
-        }
-      }
-    )});
+    this.setState({ items: this.state.items.remove(id) });
   },
   handleClearCompleted: function() {
-    this.setState({ items: this.state.items.filter(
-      function(element, index, array) {
-        return !element.completed;
-      })
-    });
+    this.setState({ items: this.state.items.removeCompleted() });
   },
   render: function() {
     return (
       <div>
         <h1>todo</h1>
         <Input onNewItem={this.handleNewItem} />
-        <Items items={this.state.items}
-          filter={this.state.filter}
-          onEditText={this.handleEditText}
+        <Items items={this.state.items} filter={this.state.filter}
+          onEditItem={this.handleEditItem}
           onRemoveItem={this.handleRemoveItem}
-          onChangeCompleted={this.handleChangeCompleted}
         />
         <Footer items={this.state.items} filter={this.state.filter}
           onChangeFilter={this.handleChangeFilter}
