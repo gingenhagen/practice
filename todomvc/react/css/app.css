@@ -1,0 +1,83 @@
+body {
+  display: flex;
+}
+
+.hidden {
+  display: none !important;
+}
+
+h1 {
+  text-align: center;
+}
+
+.app {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+  width: 100%;
+  max-width: 500px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  width: 100%;
+}
+
+.footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: relative;
+}
+
+.filters {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+}
+
+.text .readonly {
+  display: flex;
+}
+
+.text .editable {
+  display: none;
+}
+
+.text.editing .readonly {
+  display: none;
+}
+
+.text.editing .editable {
+  display: flex;
+  width: 100%;
+}
+
+.item.completed .readonly {
+  text-decoration: line-through;
+}
+
+.item .toggle {
+
+}
+
+.item .text {
+  flex-grow: 1;
+}
+
+.item .delete {
+
+}
+
+.filter.active {
+  font-weight: bold;
+}
