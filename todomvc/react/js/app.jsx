@@ -1,7 +1,7 @@
 var Input = React.createClass({
   handleKeyUp: function(e) {
     if (e.key === 'Enter') {
-      this.props.onNewItem({id: _.uniqueId(), text: e.target.value.trim()});
+      this.props.onNewItem(e.target.value.trim());
       e.target.value = '';
     }
   },
@@ -47,10 +47,14 @@ var Item = React.createClass({
   handleRemoveItem: function() {
     this.props.onRemoveItem(this.props.id);
   },
+  handleChangeCompleted: function(e) {
+    debugger;
+    this.props.onChangeCompleted({ id: this.props.id, completed: e.target.checked })
+  },
   render: function() {
     return (
       <div className='item'>
-        <input type='checkbox'></input>
+        <input type='checkbox' value={this.props.completed} onChange={this.handleChangeCompleted}></input>
         <div className={this.textClassName()} onDoubleClick={this.handleDoubleClick}>
           <span className='readonly'>{this.props.text}</span>
           <input type='text'
@@ -75,12 +79,16 @@ var Items = React.createClass({
   handleRemoveItem: function() {
     this.props.onRemoveItem.apply(this, arguments);
   },
+  handleChangeCompleted: function() {
+    this.props.onChangeCompleted.apply(this, arguments);
+  },
   render: function() {
     var items = this.props.items.map(function(item) {
       return (
         <Item key={item.id} id={item.id} text={item.text}
           onEditText={this.handleEditText}
           onRemoveItem={this.handleRemoveItem}
+          onChangeCompleted={this.handleChangeCompleted}
         />
       )
     }.bind(this));
@@ -174,8 +182,12 @@ var App = React.createClass({
       filter: 'all'
     };
   },
-  handleNewItem: function(newItem) {
-    this.setState({ items: this.state.items.concat(newItem) });
+  handleNewItem: function(newItemText) {
+    this.setState({ items: this.state.items.concat({
+      id: _.uniqueId(),
+      text: newItemText,
+      completed: false
+    }) });
   },
   handleChangeFilter: function(filter) {
     this.setState({ filter: filter });
@@ -184,7 +196,7 @@ var App = React.createClass({
     this.setState({ items: this.state.items.map(
       function(currentValue, index, array) {
         if (currentValue.id === editedItem.id) {
-          return { id: editedItem.id, text: editedItem.text };
+          return _.merge({}, currentValue, { text: editedItem.text });
         } else {
           return currentValue;
         }
@@ -198,6 +210,17 @@ var App = React.createClass({
       })
     });
   },
+  handleChangeCompleted: function(completedItem) {
+    this.setState({ items: this.state.items.map(
+      function(currentValue, index, array) {
+        if(currentValue.id === completedItem.id) {
+          return _.merge({}, currentValue, { completed: completedItem.completed });
+        } else {
+          return currentValue;
+        }
+      }
+    )});
+  },
   render: function() {
     return (
       <div>
@@ -206,6 +229,7 @@ var App = React.createClass({
         <Items items={this.state.items}
           onEditText={this.handleEditText}
           onRemoveItem={this.handleRemoveItem}
+          onChangeCompleted={this.handleChangeCompleted}
         />
         <Footer items={this.state.items} filter={this.state.filter}
           onChangeFilter={this.handleChangeFilter}
