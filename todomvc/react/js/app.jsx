@@ -44,6 +44,9 @@ var Item = React.createClass({
     this.props.onEditText({ id: this.props.id, text: e.target.value })
     this.setState({editing: false});
   },
+  handleRemoveItem: function() {
+    this.props.onRemoveItem(this.props.id);
+  },
   render: function() {
     return (
       <div className='item'>
@@ -59,7 +62,7 @@ var Item = React.createClass({
             onBlur={this.handleBlur}
           ></input>
         </div>
-        <button type='button'>X</button>
+        <button type='button' onClick={this.handleRemoveItem}>X</button>
       </div>
     );
   }
@@ -69,10 +72,16 @@ var Items = React.createClass({
   handleEditText: function() {
     this.props.onEditText.apply(this, arguments);
   },
+  handleRemoveItem: function() {
+    this.props.onRemoveItem.apply(this, arguments);
+  },
   render: function() {
     var items = this.props.items.map(function(item) {
       return (
-        <Item key={item.id} id={item.id} text={item.text} onEditText={this.handleEditText}  />
+        <Item key={item.id} id={item.id} text={item.text}
+          onEditText={this.handleEditText}
+          onRemoveItem={this.handleRemoveItem}
+        />
       )
     }.bind(this));
     return (
@@ -118,9 +127,18 @@ var ItemsFilter = React.createClass({
   render: function() {
     return (
       <div className='filters'>
-        <button type='button' className={this.filterClass('all')} onClick={this.handleFilterAll}>All</button>
-        <button type='button' className={this.filterClass('active')} onClick={this.handleFilterActive}>Active</button>
-        <button type='button' className={this.filterClass('completed')} onClick={this.handleFilterCompleted}>Completed</button>
+        <button type='button'
+          className={this.filterClass('all')}
+          onClick={this.handleFilterAll}
+        >All</button>
+        <button type='button'
+          className={this.filterClass('active')}
+          onClick={this.handleFilterActive}
+        >Active</button>
+        <button type='button'
+          className={this.filterClass('completed')}
+          onClick={this.handleFilterCompleted}
+        >Completed</button>
       </div>
     )
   }
@@ -142,7 +160,7 @@ var Footer = React.createClass({
     return (
       <div className='footer'>
         <ItemsLeft items={this.props.items} />
-        <ItemsFilter onChangeFilter={this.handleChangeFilter} filter={this.props.filter} />
+        <ItemsFilter filter={this.props.filter} onChangeFilter={this.handleChangeFilter} />
         <ClearCompleted items={this.props.items} />
       </div>
     )
@@ -173,13 +191,25 @@ var App = React.createClass({
       })
     });
   },
+  handleRemoveItem: function(id) {
+    this.setState({ items: this.state.items.filter(
+      function(element, index, array) {
+        return element.id !== id;
+      })
+    });
+  },
   render: function() {
     return (
       <div>
         <h1>todo</h1>
         <Input onNewItem={this.handleNewItem} />
-        <Items items={this.state.items} onEditText={this.handleEditText} />
-        <Footer items={this.state.items} onChangeFilter={this.handleChangeFilter} filter={this.state.filter} />
+        <Items items={this.state.items}
+          onEditText={this.handleEditText}
+          onRemoveItem={this.handleRemoveItem}
+        />
+        <Footer items={this.state.items} filter={this.state.filter}
+          onChangeFilter={this.handleChangeFilter}
+        />
       </div>
     );
   }
