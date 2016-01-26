@@ -20,6 +20,9 @@
 (defn current-page []
   [:div [(session/get :current-page)]])
 
+(defn todo-page []
+   [:div [:h1 "todos"]])
+
 ;; -------------------------
 ;; Routes
 
@@ -28,6 +31,9 @@
 
 (secretary/defroute "/about" []
   (session/put! :current-page #'about-page))
+
+(secretary/defroute "/todo" []
+  (session/put! :current-page #'todo-page))
 
 ;; -------------------------
 ;; Initialize app
