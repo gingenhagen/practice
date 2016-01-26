@@ -1,11 +1,9 @@
 (ns reagent-todomvc.model
   (:require [reagent.core :as r :refer [atom]]))
 
-(def items (r/atom [{:text "item #1", :completed true, :id 1}
-                    {:text "item #2", :completed false, :id 2}
-                    {:text "item #3", :completed true, :id 3}]))
+(defonce items (r/atom []))
 
-(def filter-type (r/atom :all))
+(defonce filter-type (r/atom :all))
 
 (def index (r/atom 0))
 
@@ -36,7 +34,7 @@
 (defn add-item [list text]
   (conj list {:text text,
               :completed false,
-              :id index!}))
+              :id (index!)}))
 
 (defn add-item! [text]
   (swap! items #(add-item %1 text)))

@@ -21,7 +21,12 @@
 ;; http://localhost:3449/cards
 
 (defcard-rg todo-core-card
-  [todo/app])
+  [todo/app]
+  model/items
+  {:inspect-data true
+   :history true})
+
+
 
 (defcard-rg todo-input
   [todo/input])

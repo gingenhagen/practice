@@ -1,17 +1,25 @@
 (ns reagent-todomvc.todo
-  (:require [reagent.core :as reagent :refer [atom]] ; this is required
+  (:require [reagent.core :as r :refer [atom]] ; this is required
             [reagent-todomvc.model :as model]
             [clojure.string :as string]))
 
+(defonce init (do
+                (model/add-item! "item #1")
+                (model/add-item! "item #2")
+                (model/add-item! "item #3")))
+
 (defn input []
-  [:input {:type "text"}])
+  (let [val (r/atom "")
+        on-key-up #(when (= (.-which %1) 13)
+                     (model/add-item! (.-target.value %1)))]
+    [:input {:type "text", :on-key-up on-key-up}]))
 
 (defn item [item]
   [:li
     [:input {:type "checkbox", :checked (:completed item)}]
     [:span (:text item)]
     [:input {:type "text", :value (:text item)}]
-    [:button {:type "button" :on-click #(model/remove-item! (:id item))} "X"]])
+    [:button {:type "button", :on-click #(model/remove-item! (:id item))} "X"]])
 
 (defn items []
   [:ul (map #(item %1)
