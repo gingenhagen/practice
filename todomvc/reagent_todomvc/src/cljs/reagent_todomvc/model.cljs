@@ -1,7 +1,7 @@
 (ns reagent-todomvc.model
   (:require [reagent.core :as r :refer [atom]]))
 
-(defonce items (r/atom []))
+(defonce items (r/atom {}))
 
 (defonce filter-type (r/atom :all))
 
@@ -14,13 +14,13 @@
   (reset! filter-type filter))
 
 (defn all []
-  @items)
+  (vals @items))
 
 (defn active []
-  (remove #(:completed %1) @items))
+  (remove #(:completed %1) (vals @items)))
 
 (defn completed []
-  (filter #(:completed %1) @items))
+  (filter #(:completed %1) (vals @items)))
 
 (defn filter-all? []
   (= filter-type :all))
@@ -32,9 +32,11 @@
   (= filter-type :completed))
 
 (defn add-item [list text]
-  (conj list {:text text,
-              :completed false,
-              :id (index!)}))
+  ; (conj list {:text text,
+  (let [id (index!)]
+    (assoc-in list [id] {:text text,
+                         :completed false,
+                         :id id})))
 
 (defn add-item! [text]
   (swap! items #(add-item %1 text)))
@@ -43,7 +45,14 @@
   (= id (:id item)))
 
 (defn remove-item [list id]
-  (remove #(has-id %1 id) list))
+  (dissoc list id))
+  ; (remove #(has-id %1 id) list))
 
 (defn remove-item! [id]
   (swap! items #(remove-item %1 id)))
+
+(defn update-item [list id hash]
+  (update-in list [id] merge hash))
+
+(defn update-item! [id hash]
+  (swap! items #(update-item %1 id hash)))
