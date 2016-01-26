@@ -2,7 +2,8 @@
   (:require [reagent.core :as reagent :refer [atom]]
             [reagent.session :as session]
             [reagent-todomvc.core :as core]
-            [reagent-todomvc.todo :as todo])
+            [reagent-todomvc.todo :as todo]
+            [reagent-todomvc.model :as model])
   (:require-macros
    [devcards.core
     :as dc
@@ -29,4 +30,14 @@
   [todo/items])
 
 (defcard-rg todo-footer
-  [todo/footer])
+  "This footer should exist because we pass in a non-empty list of items"
+  [todo/footer (model/all)]
+  {:items model/items,
+   :filter-type @model/filter-type}
+  {:inspect-data true
+   :history true})
+
+(defcard-rg empty-footer
+  "This footer should be empty because we pass in an empty list of items"
+  [todo/footer []]
+  [])
