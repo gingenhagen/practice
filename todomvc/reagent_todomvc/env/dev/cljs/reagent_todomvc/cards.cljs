@@ -3,7 +3,8 @@
             [reagent.session :as session]
             [reagent-todomvc.core :as core]
             [reagent-todomvc.todo :as todo]
-            [reagent-todomvc.model :as model])
+            [reagent-todomvc.model :as model]
+            [reagent-todomvc.example :as example])
   (:require-macros
    [devcards.core
     :as dc
@@ -26,8 +27,6 @@
   {:inspect-data true
    :history true})
 
-
-
 (defcard-rg todo-input
   [todo/input])
 
@@ -46,3 +45,8 @@
   "This footer should be empty because we pass in an empty list of items"
   [todo/footer []]
   [])
+
+(defcard-rg example-state
+  "This is an example from https://reagent-project.github.io/"
+  [:div
+    [example/shared-state]])

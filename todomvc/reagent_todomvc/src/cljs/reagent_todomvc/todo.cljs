@@ -10,16 +10,25 @@
 
 (defn input []
   (let [val (r/atom "")
-        on-key-up #(when (= (.-which %1) 13)
-                     (model/add-item! (.-target.value %1)))]
-    [:input {:type "text", :on-key-up on-key-up}]))
+        ; on-key-up (fn [e] (when...
+        on-key-up #(when (= (.-which %) 13)
+                    (model/add-item! (.-target.value %))
+                    (reset! val ""))
+        on-change #(reset! val (-> % .-target .-value))]
+    (fn [] [:input {:type "text", :value @val,
+                    :on-change on-change,
+                    :on-key-up on-key-up}])))
 
 (defn item [item]
   [:li
-    [:input {:type "checkbox", :checked (:completed item)}]
+    [:input {:type "checkbox", :checked (:completed item),
+             :on-change #(model/update-item! (:id item)
+                          {:completed (-> % .-target .-checked)})}]
     [:span (:text item)]
     [:input {:type "text", :value (:text item)}]
-    [:button {:type "button", :on-click #(model/remove-item! (:id item))} "X"]])
+    [:button {:type "button",
+              :on-click #(model/remove-item! (:id item))}
+             "X"]])
 
 (defn items []
   [:ul (map #(item %1)
