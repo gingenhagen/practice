@@ -18,3 +18,15 @@
 
 ;; remember to run 'lein figwheel devcards' and then browse to
 ;; http://localhost:3449/cards
+
+(defcard-rg todo-core-card
+  [todo/app])
+
+(defcard-rg todo-input
+  [todo/input])
+
+(defcard-rg todo-list
+  [todo/items])
+
+(defcard-rg todo-footer
+  [todo/footer])
