@@ -1,6 +1,6 @@
 (ns reagent-todomvc.model
   (:require [reagent.core :as reagent :refer [atom]]))
 
-(def items ["item #1"
-            "item #2"
-            "item #3"])
+(def items [{:text "item #1", :completed true}
+            {:text "item #2", :completed false}
+            {:text "item #3", :completed true}])
