@@ -10,7 +10,8 @@
   [:li
     [:input {:type "checkbox", :checked (:completed item)}]
     [:span (:text item)]
-    [:input {:type "text", :value (:text item)}]])
+    [:input {:type "text", :value (:text item)}]
+    [:button {:type "button" :on-click #(model/remove-item! (:id item))} "X"]])
 
 (defn items []
   [:ul (map #(item %1)
