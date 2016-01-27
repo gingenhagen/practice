@@ -18,14 +18,14 @@
                  [org.clojure/clojurescript "1.7.228" :scope "provided"]
                  [secretary "1.2.3"]
                  [venantius/accountant "0.1.6"
-                  :exclusions [org.clojure/tools.reader]]
-                 ]
+                  :exclusions [org.clojure/tools.reader]]]
+
 
   :plugins [[lein-environ "1.0.1"]
             [lein-cljsbuild "1.1.1"]
             [lein-asset-minifier "0.2.4"
-             :exclusions [org.clojure/clojure]]
-]
+             :exclusions [org.clojure/clojure]]]
+
 
   :ring {:handler reagent-todomvc.handler/app
          :uberwar-name "reagent_todomvc.war"}
@@ -76,8 +76,8 @@
                                   [com.cemerick/piggieback "0.2.1"]
                                   [devcards "0.2.0-8"
                                    :exclusions [org.clojure/tools.reader]]
-                                  [pjstadig/humane-test-output "0.7.1"]
-                                  ]
+                                  [pjstadig/humane-test-output "0.7.1"]]
+
 
                    :source-paths ["env/dev/clj"]
                    :plugins [[lein-figwheel "0.5.0-3"
@@ -90,8 +90,8 @@
                                            org.clojure/clojurescript
                                            org.clojure/core.async
                                            org.clojure/tools.analyzer.jvm]]
-                             [org.clojure/clojurescript "1.7.170"]
-                             ]
+                             [org.clojure/clojurescript "1.7.170"]]
+
 
                    :injections [(require 'pjstadig.humane-test-output)
                                 (pjstadig.humane-test-output/activate!)]
@@ -99,8 +99,8 @@
                    :figwheel {:http-server-root "public"
                               :server-port 3449
                               :nrepl-port 7002
-                              :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"
-                                                 ]
+                              :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"]
+
                               :css-dirs ["resources/public/css"]
                               :ring-handler reagent-todomvc.handler/app}
 
@@ -117,10 +117,10 @@
                                                               :asset-path "js/devcards_out"
                                                               :output-to "target/cljsbuild/public/js/app_devcards.js"
                                                               :output-dir "target/cljsbuild/public/js/devcards_out"
-                                                              :source-map-timestamp true}}
-                                        }
+                                                              :source-map-timestamp true}}}}}
 
-                               }}
+
+
 
              :uberjar {:hooks [minify-assets.plugin/hooks]
                        :source-paths ["env/prod/clj"]
