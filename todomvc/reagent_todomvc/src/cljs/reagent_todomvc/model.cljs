@@ -1,19 +1,22 @@
 (ns reagent-todomvc.model
-  (:require [reagent.core :as r :refer [atom]]))
+  (:require [reagent.core :as r]))
 
 (defonce items (r/atom {}))
 
-(defonce filter-type (r/atom :all))
+(defonce ^:private filter-type (r/atom :all))
 
-(def index (r/atom 0))
+(defn get-filter []
+  @filter-type)
 
-(defn index! []
+(def ^:private index (r/atom 0))
+
+(defn- index! []
   (swap! index inc))
 
 (defn set-filter! [filter]
   (reset! filter-type filter))
 
-(defn all-keys []
+(defn- all-keys []
   (keys @items))
 
 (defn all []
@@ -22,7 +25,7 @@
 (defn all-count []
   (count (all-keys)))
 
-(defn active-keys []
+(defn- active-keys []
   (keys (remove (fn [[k,v]] (:completed v)) @items)))
 
 (defn active []
@@ -31,7 +34,7 @@
 (defn active-count []
   (count (active-keys)))
 
-(defn completed-keys []
+(defn- completed-keys []
   (keys (filter (fn [[k,v]] (:completed v)) @items)))
 
 (defn completed []
@@ -40,8 +43,7 @@
 (defn completed-count []
   (count (completed-keys)))
 
-(defn add-item [list text]
-  ; (conj list {:text text,
+(defn- add-item [list text]
   (let [id (index!)]
     (assoc-in list [id] {:text text,
                          :completed false,
@@ -50,23 +52,19 @@
 (defn add-item! [text]
   (swap! items #(add-item %1 text)))
 
-(defn has-id [item id]
-  (= id (:id item)))
-
-(defn remove-item [list id]
+(defn- remove-item [list id]
   (dissoc list id))
-  ; (remove #(has-id %1 id) list))
 
 (defn remove-item! [id]
   (swap! items #(remove-item %1 id)))
 
-(defn update-item [list id hash]
+(defn- update-item [list id hash]
   (update-in list [id] merge hash))
 
 (defn update-item! [id hash]
   (swap! items #(update-item %1 id hash)))
 
-(defn remove-completed [list]
+(defn- remove-completed [list]
   (apply dissoc list (completed-keys)))
 
 (defn remove-completed! []

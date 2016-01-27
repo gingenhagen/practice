@@ -1,7 +1,7 @@
 (ns reagent-todomvc.todo
-  (:require [reagent.core :as r :refer [atom]] ; this is required
+  (:require [reagent.core :as r]
             [reagent-todomvc.model :as model]
-            [clojure.string :as string]))
+            [clojure.string :as str]))
 
 (defonce init (do
                 (model/add-item! "item #1")
@@ -10,11 +10,9 @@
 
 (defn input []
   (let [val (r/atom "")
-        ; on-key-up (fn [e] (when...
-        ; on-key-up #(when (= (.-key %) "Enter")
         on-key-up #(when (-> % .-key (= "Enter"))
-                    (model/add-item! (.-target.value %))
-                    (reset! val ""))
+                     (model/add-item! (.-target.value %))
+                     (reset! val ""))
         on-change #(reset! val (-> % .-target .-value))]
     (fn [] [:input.input {:type "text", :value @val,
                           :on-change on-change,
@@ -59,10 +57,10 @@
 
 (defn items []
   [:ul (map #(vector item %1)
-          (case @model/filter-type
-            :all (model/all) ; :all (vals @model/items)
-            :active (model/active)
-            :completed (model/completed)))])
+         (case (model/get-filter)
+           :all (model/all)
+           :active (model/active)
+           :completed (model/completed)))])
 
 (defn pluralize [count description]
   (str count " " description (if (= count 1) "" "s")))
@@ -73,8 +71,8 @@
 (defn item-filter [filter-type]
   [:button.filter {:type "button",
                    :on-click #(model/set-filter! filter-type)
-                   :class (if (= @model/filter-type filter-type) "active")}
-    (string/capitalize (name filter-type))])
+                   :class (if (= (model/get-filter) filter-type) "active")}
+    (str/capitalize (name filter-type))])
 
 (defn item-filters []
   [:div.filters
@@ -84,7 +82,7 @@
 
 (defn remove-completed []
   (if (< 0 (model/completed-count))
-    [:button {:type "button", :on-click model/remove-completed! } "Remove completed"]))
+    [:button {:type "button", :on-click model/remove-completed!} "Remove completed"]))
 
 (defn footer []
   (if (< 0 (model/all-count))
