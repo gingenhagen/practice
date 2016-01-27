@@ -29,7 +29,8 @@
   (html
    [:html
     [:head
-     [:meta {:charset "utf-8"}]]
+     [:meta {:charset "utf-8"}]
+     (include-css "css/todo.css")]
     [:body
      mount-target
      (include-js "js/app_devcards.js")]]))

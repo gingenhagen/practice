@@ -31,15 +31,6 @@
 (defn completed []
   (vals (select-keys @items (completed-keys))))
 
-(defn filter-all? []
-  (= filter-type :all))
-
-(defn filter-active? []
-  (= filter-type :active))
-
-(defn filter-completed? []
-  (= filter-type :completed))
-
 (defn add-item [list text]
   ; (conj list {:text text,
   (let [id (index!)]

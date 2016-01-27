@@ -15,38 +15,46 @@
                     (model/add-item! (.-target.value %))
                     (reset! val ""))
         on-change #(reset! val (-> % .-target .-value))]
-    (fn [] [:input {:type "text", :value @val,
-                    :on-change on-change,
-                    :on-key-up on-key-up}])))
+    (fn [] [:input.input {:type "text", :value @val,
+                          :on-change on-change,
+                          :on-key-up on-key-up}])))
 
 (defn item [item]
   (let [val (r/atom (:text item))
         editing (r/atom false)]
     (fn [item]
-      (let [on-change-completed #(model/update-item! (:id item)
-                                   {:completed (-> % .-target .-checked)})
-            on-change-text #(reset! val (-> % .-target .-value))
-            on-key-up-text #(case (.-key %)
-                             "Enter" (do
-                                      (model/update-item! (:id item)
-                                        {:text (-> % .-target .-value)})
-                                      (reset! editing false))
-                             "Escape" (do
-                                        (reset! val (:text item))
-                                        (reset! editing false))
-                             :default)
-            on-double-click #(if-not @editing (reset! editing true))]
-        [:li {:class (if @editing "editing")
-              :on-double-click on-double-click}
-          [:input {:type "checkbox", :checked (:completed item),
+      (letfn [(on-change-completed [e]
+                (model/update-item!
+                  (:id item)
+                  {:completed (-> e .-target .-checked)}))
+              (on-change-text [e]
+                (reset! val (-> e .-target .-value)))
+              (on-key-up-text [e]
+                (case (.-key e)
+                  "Enter" (save-text (-> e .-target .-value))
+                  "Escape" (cancel-text)
+                  :default))
+              (on-double-click []
+                (if-not @editing (reset! editing true)))
+              (save-text [text]
+                (model/update-item! (:id item)
+                  {:text text})
+                (reset! editing false))
+              (cancel-text []
+                (reset! val (:text item))
+                (reset! editing false))]
+        [:li.item
+          [:input {:type "checkbox", :checked (:completed item,)
                    :on-change on-change-completed}]
-          [:span (:text item)]
-          [:input {:type "text", :value @val,
-                   :on-change on-change-text
-                   :on-key-up on-key-up-text}]
+          [:div.text {:on-double-click on-double-click
+                      :class (if @editing "editing")}
+            [:span.readonly (:text item)]
+            [:input.editable {:type "text", :value @val,
+                              :on-change on-change-text
+                              :on-key-up on-key-up-text}]]
           [:button {:type "button",
                     :on-click #(model/remove-item! (:id item))}
-                  "X"]]))))
+                   "X"]]))))
 
 (defn items []
   [:ul (map #(vector item %1)
@@ -64,11 +72,11 @@
 (defn item-filter [filter-type]
   [:button {:type "button",
             :on-click #(model/set-filter! filter-type)
-            :class (str "filter " (if model/filter-active? "active"))}
+            :class (str "filter " (if (= @model/filter-type filter-type) "active"))}
     (string/capitalize (name filter-type))])
 
 (defn item-filters []
-  [:div
+  [:div.filters
     (item-filter :all)
     (item-filter :active)
     (item-filter :completed)])
@@ -79,14 +87,14 @@
 
 (defn footer [all-items]
   (if (< 0 (count all-items))
-    [:div
+    [:div.footer
       [items-left]
       [item-filters]
       [remove-completed]]))
 
 (defn app []
-  [:div
-    [:h1 "todos"]
+  [:div.app
+    [:h1.header "todos"]
     [input]
     [items]
     [footer (model/all)]])
