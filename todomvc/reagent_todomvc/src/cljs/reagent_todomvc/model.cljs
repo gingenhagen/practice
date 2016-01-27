@@ -13,14 +13,23 @@
 (defn set-filter! [filter]
   (reset! filter-type filter))
 
+(defn all-keys []
+  (keys @items))
+
 (defn all []
-  (vals @items))
+  (vals (select-keys @items (all-keys))))
+
+(defn active-keys []
+  (keys (remove (fn [[k,v]] (:completed v)) @items)))
 
 (defn active []
-  (remove #(:completed %1) (vals @items)))
+  (vals (select-keys @items (active-keys))))
+
+(defn completed-keys []
+  (keys (filter (fn [[k,v]] (:completed v)) @items)))
 
 (defn completed []
-  (filter #(:completed %1) (vals @items)))
+  (vals (select-keys @items (completed-keys))))
 
 (defn filter-all? []
   (= filter-type :all))
@@ -56,3 +65,9 @@
 
 (defn update-item! [id hash]
   (swap! items #(update-item %1 id hash)))
+
+(defn remove-completed [list]
+  (apply dissoc list (completed-keys)))
+
+(defn remove-completed! []
+  (swap! items remove-completed))

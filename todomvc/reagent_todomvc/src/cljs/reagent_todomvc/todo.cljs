@@ -11,7 +11,7 @@
 (defn input []
   (let [val (r/atom "")
         ; on-key-up (fn [e] (when...
-        on-key-up #(when (= (.-which %) 13)
+        on-key-up #(when (= (.-key %) "Enter")
                     (model/add-item! (.-target.value %))
                     (reset! val ""))
         on-change #(reset! val (-> % .-target .-value))]
@@ -20,21 +20,39 @@
                     :on-key-up on-key-up}])))
 
 (defn item [item]
-  [:li
-    [:input {:type "checkbox", :checked (:completed item),
-             :on-change #(model/update-item! (:id item)
-                          {:completed (-> % .-target .-checked)})}]
-    [:span (:text item)]
-    [:input {:type "text", :value (:text item)}]
-    [:button {:type "button",
-              :on-click #(model/remove-item! (:id item))}
-             "X"]])
+  (let [val (r/atom (:text item))
+        editing (r/atom false)]
+    (fn [item]
+      (let [on-change-completed #(model/update-item! (:id item)
+                                   {:completed (-> % .-target .-checked)})
+            on-change-text #(reset! val (-> % .-target .-value))
+            on-key-up-text #(case (.-key %)
+                             "Enter" (do
+                                      (model/update-item! (:id item)
+                                        {:text (-> % .-target .-value)})
+                                      (reset! editing false))
+                             "Escape" (do
+                                        (reset! val (:text item))
+                                        (reset! editing false))
+                             :default)
+            on-double-click #(if-not @editing (reset! editing true))]
+        [:li {:class (if @editing "editing")
+              :on-double-click on-double-click}
+          [:input {:type "checkbox", :checked (:completed item),
+                   :on-change on-change-completed}]
+          [:span (:text item)]
+          [:input {:type "text", :value @val,
+                   :on-change on-change-text
+                   :on-key-up on-key-up-text}]
+          [:button {:type "button",
+                    :on-click #(model/remove-item! (:id item))}
+                  "X"]]))))
 
 (defn items []
-  [:ul (map #(item %1)
+  [:ul (map #(vector item %1)
           (case @model/filter-type
-            :all (model/all),
-            :active (model/active),
+            :all (model/all) ; :all (vals @model/items)
+            :active (model/active)
             :completed (model/completed)))])
 
 (defn pluralize [count description]
@@ -56,7 +74,8 @@
     (item-filter :completed)])
 
 (defn remove-completed []
-  [:button {:type "button"} "Remove completed"])
+  (if (< 0 (count (model/completed)))
+    [:button {:type "button", :on-click model/remove-completed! } "Remove completed"]))
 
 (defn footer [all-items]
   (if (< 0 (count all-items))
