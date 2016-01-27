@@ -19,17 +19,26 @@
 (defn all []
   (vals (select-keys @items (all-keys))))
 
+(defn all-count []
+  (count (all-keys)))
+
 (defn active-keys []
   (keys (remove (fn [[k,v]] (:completed v)) @items)))
 
 (defn active []
   (vals (select-keys @items (active-keys))))
 
+(defn active-count []
+  (count (active-keys)))
+
 (defn completed-keys []
   (keys (filter (fn [[k,v]] (:completed v)) @items)))
 
 (defn completed []
   (vals (select-keys @items (completed-keys))))
+
+(defn completed-count []
+  (count (completed-keys)))
 
 (defn add-item [list text]
   ; (conj list {:text text,

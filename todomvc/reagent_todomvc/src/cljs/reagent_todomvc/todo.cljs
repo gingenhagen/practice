@@ -11,7 +11,8 @@
 (defn input []
   (let [val (r/atom "")
         ; on-key-up (fn [e] (when...
-        on-key-up #(when (= (.-key %) "Enter")
+        ; on-key-up #(when (= (.-key %) "Enter")
+        on-key-up #(when (-> % .-key (= "Enter"))
                     (model/add-item! (.-target.value %))
                     (reset! val ""))
         on-change #(reset! val (-> % .-target .-value))]
@@ -43,13 +44,13 @@
               (cancel-text []
                 (reset! val (:text item))
                 (reset! editing false))]
-        [:li.item
-          [:input {:type "checkbox", :checked (:completed item,)
+        [:li.item {:class (if (:completed item) "completed")}
+          [:input {:type "checkbox", :checked (:completed item)
                    :on-change on-change-completed}]
           [:div.text {:on-double-click on-double-click
                       :class (if @editing "editing")}
             [:span.readonly (:text item)]
-            [:input.editable {:type "text", :value @val,
+            [:input.editable {:type "text", :value @val
                               :on-change on-change-text
                               :on-key-up on-key-up-text}]]
           [:button {:type "button",
@@ -67,12 +68,12 @@
   (str count " " description (if (= count 1) "" "s")))
 
 (defn items-left []
-  [:span (pluralize (count (model/active)) "item") " left"])
+  [:span (pluralize (model/active-count) "item") " left"])
 
 (defn item-filter [filter-type]
-  [:button {:type "button",
-            :on-click #(model/set-filter! filter-type)
-            :class (str "filter " (if (= @model/filter-type filter-type) "active"))}
+  [:button.filter {:type "button",
+                   :on-click #(model/set-filter! filter-type)
+                   :class (if (= @model/filter-type filter-type) "active")}
     (string/capitalize (name filter-type))])
 
 (defn item-filters []
@@ -82,11 +83,11 @@
     (item-filter :completed)])
 
 (defn remove-completed []
-  (if (< 0 (count (model/completed)))
+  (if (< 0 (model/completed-count))
     [:button {:type "button", :on-click model/remove-completed! } "Remove completed"]))
 
-(defn footer [all-items]
-  (if (< 0 (count all-items))
+(defn footer []
+  (if (< 0 (model/all-count))
     [:div.footer
       [items-left]
       [item-filters]
@@ -97,4 +98,4 @@
     [:h1.header "todos"]
     [input]
     [items]
-    [footer (model/all)]])
+    [footer]])
