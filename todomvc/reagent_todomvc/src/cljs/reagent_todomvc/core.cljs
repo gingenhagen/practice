@@ -2,8 +2,8 @@
     (:require [reagent.core :as reagent :refer [atom]]
               [reagent.session :as session]
               [secretary.core :as secretary :include-macros true]
-              [accountant.core :as accountant]))
-              ; [todo.core :as todo]))
+              [accountant.core :as accountant]
+              [reagent-todomvc.todo.app :as todo]))
 
 ;; -------------------------
 ;; Views
@@ -11,7 +11,7 @@
 (defn home-page []
   [:div [:h2 "Welcome to reagent_todomvc"]
    [:div [:a {:href "/about"} "go to about page"]]
-   [:div [:a {:href "/todos"} "go to todos page"]]])
+   [:div [:a {:href "/todo"} "go to todo page"]]])
 
 (defn about-page []
   [:div [:h2 "About reagent_todomvc"]
@@ -21,7 +21,7 @@
   [:div [(session/get :current-page)]])
 
 (defn todo-page []
-   [:div [:h1 "todos"]])
+  [todo/app])
 
 ;; -------------------------
 ;; Routes

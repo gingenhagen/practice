@@ -20,7 +20,8 @@
      [:meta {:charset "utf-8"}]
      [:meta {:name "viewport"
              :content "width=device-width, initial-scale=1"}]
-     (include-css (if (env :dev) "css/site.css" "css/site.min.css"))]
+     (include-css (if (env :dev) "css/site.css" "css/site.min.css"))
+     (include-css (if (env :dev) "css/todo.css" "css/todo.min.css"))]
     [:body
      mount-target
      (include-js "js/app.js")]]))
@@ -30,6 +31,7 @@
    [:html
     [:head
      [:meta {:charset "utf-8"}]
+     (include-css "css/site.css")
      (include-css "css/todo.css")]
     [:body
      mount-target
@@ -38,6 +40,7 @@
 (defroutes routes
   (GET "/" [] loading-page)
   (GET "/about" [] loading-page)
+  (GET "/todo" [] loading-page)
   (GET "/cards" [] cards-page)
   (resources "/")
   (not-found "Not Found"))
