@@ -31,7 +31,6 @@
    [:html
     [:head
      [:meta {:charset "utf-8"}]
-     (include-css "css/site.css")
      (include-css "css/todo.css")]
     [:body
      mount-target
