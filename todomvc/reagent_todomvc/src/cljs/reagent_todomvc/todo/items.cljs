@@ -40,7 +40,7 @@
                    "X"]]))))
 
 (defn items []
-  [:ul (map #(vector item %1)
+  [:ul (map (fn[el] ^{:key (:id el)} [item el])
          (case (model/get-filter)
            :all (model/all)
            :active (model/active)
