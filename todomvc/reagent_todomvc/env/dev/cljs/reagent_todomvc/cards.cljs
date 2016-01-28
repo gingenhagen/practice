@@ -27,6 +27,12 @@
    :filter-type model/filter-type}
   {:inspect-data true
    :history true})
+
+(defcard-rg component-with-callback-card
+  [example/component-with-callback])
+
+(defcard-rg example-items
+  [example/items])
 ;
 ; (defcard-rg todo-input
 ;   [todo/input])
