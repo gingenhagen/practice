@@ -22,8 +22,11 @@
 (defn- all-keys []
   (keys @items))
 
+(defn select-vals [map keyseq]
+  (vals (select-keys map keyseq)))
+
 (defn all []
-  (vals (select-keys @items (all-keys))))
+  (select-vals @items (all-keys)))
 
 (defn all-count []
   (count (all-keys)))
@@ -32,7 +35,7 @@
   (keys (remove (fn [[k,v]] (:completed v)) @items)))
 
 (defn active []
-  (vals (select-keys @items (active-keys))))
+  (select-vals @items (active-keys)))
 
 (defn active-count []
   (count (active-keys)))
@@ -41,7 +44,7 @@
   (keys (filter (fn [[k,v]] (:completed v)) @items)))
 
 (defn completed []
-  (vals (select-keys @items (completed-keys))))
+  (select-vals @items (completed-keys)))
 
 (defn completed-count []
   (count (completed-keys)))
@@ -53,19 +56,19 @@
                          :id id})))
 
 (defn add-item! [text]
-  (swap! items #(add-item %1 text)))
+  (swap! items add-item text))
 
 (defn- remove-item [list id]
   (dissoc list id))
 
 (defn remove-item! [id]
-  (swap! items #(remove-item %1 id)))
+  (swap! items remove-item id))
 
 (defn- update-item [list id hash]
   (update-in list [id] merge hash))
 
 (defn update-item! [id hash]
-  (swap! items #(update-item %1 id hash)))
+  (swap! items update-item id hash))
 
 (defn- remove-completed [list]
   (apply dissoc list (completed-keys)))
