@@ -1,4 +1,4 @@
-(ns reagent-todomvc.todo.input
+(ns reagent-todomvc.todo.header
   (:require [reagent.core :as r]
             [reagent-todomvc.todo.model :as model]))
 
@@ -11,3 +11,8 @@
     (fn [] [:input.input {:type "text", :value @val,
                           :on-change on-change,
                           :on-key-up on-key-up}])))
+
+(defn header []
+  [:div.header
+    [:h1 "todos"]
+    [input]])
