@@ -3,7 +3,7 @@
             [reagent.session :as session]
             [reagent-todomvc.core :as core]
             [reagent-todomvc.todo :as todo]
-            [reagent-todomvc.model :as model]
+            [reagent-todomvc.todo.model :as model]
             [reagent-todomvc.example :as example])
   (:require-macros
    [devcards.core
@@ -23,30 +23,31 @@
 
 (defcard-rg todo-core-card
   [todo/app]
-  model/items
+  {:items model/items
+   :filter-type model/filter-type}
   {:inspect-data true
    :history true})
-
-(defcard-rg todo-input
-  [todo/input])
-
-(defcard-rg todo-list
-  [todo/items])
-
-(defcard-rg todo-footer
-  "This footer should exist because we pass in a non-empty list of items"
-  [todo/footer (model/all)]
-  {:items model/items,
-   :filter-type @model/filter-type}
-  {:inspect-data true
-   :history true})
-
-(defcard-rg empty-footer
-  "This footer should be empty because we pass in an empty list of items"
-  [todo/footer []]
-  [])
-
-(defcard-rg example-state
-  "This is an example from https://reagent-project.github.io/"
-  [:div
-    [example/shared-state]])
+;
+; (defcard-rg todo-input
+;   [todo/input])
+;
+; (defcard-rg todo-list
+;   [todo/items])
+;
+; (defcard-rg todo-footer
+;   "This footer should exist because we pass in a non-empty list of items"
+;   [todo/footer (model/all)]
+;   {:items (model/get-items)
+;    :filter-type (model/get-filter)}
+;   {:inspect-data true
+;    :history true})
+;
+; (defcard-rg empty-footer
+;   "This footer should be empty because we pass in an empty list of items"
+;   [todo/footer []]
+;   [])
+;
+; (defcard-rg example-state
+;   "This is an example from https://reagent-project.github.io/"
+;   [:div
+;     [example/shared-state]])

@@ -1,7 +1,10 @@
-(ns reagent-todomvc.model
+(ns reagent-todomvc.todo.model
   (:require [reagent.core :as r]))
 
-(defonce items (r/atom {}))
+(defonce ^:private items (r/atom {}))
+
+(defn get-items []
+  @items)
 
 (defonce ^:private filter-type (r/atom :all))
 
