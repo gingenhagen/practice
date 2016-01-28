@@ -1,4 +1,4 @@
-(ns reagent-todomvc.todo
+(ns reagent-todomvc.todo.app
   (:require [reagent.core :as r]
             [reagent-todomvc.todo.input :refer [input]]
             [reagent-todomvc.todo.items :refer [items]]

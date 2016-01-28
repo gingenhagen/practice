@@ -2,7 +2,7 @@
   (:require [reagent.core :as reagent :refer [atom]]
             [reagent.session :as session]
             [reagent-todomvc.core :as core]
-            [reagent-todomvc.todo :as todo]
+            [reagent-todomvc.todo.app :as todo]
             [reagent-todomvc.todo.model :as model]
             [reagent-todomvc.example :as example])
   (:require-macros
