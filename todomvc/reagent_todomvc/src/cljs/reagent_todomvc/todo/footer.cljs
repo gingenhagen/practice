@@ -3,8 +3,16 @@
             [reagent-todomvc.todo.model :as model]
             [clojure.string :as str]))
 
+(defn if=
+  ([test-args then] (if (apply = test-args) then))
+  ([test-args then else] (if (apply = test-args) then else)))
+
+(defn if-not=
+  ([test-args then] (if-not (apply = test-args) then))
+  ([test-args then else] (if-not (apply = test-args) then else)))
+
 (defn pluralize [count description]
-  (str count " " description (if (= count 1) "" "s")))
+  (str count " " description (if-not= [count 1] "s" "")))
 
 (defn items-left []
   [:span (pluralize (model/active-count) "item") " left"])
@@ -12,7 +20,7 @@
 (defn item-filter [filter-type]
   [:button.filter {:type "button",
                    :on-click #(model/set-filter! filter-type)
-                   :class (if (= (model/get-filter) filter-type) "active")}
+                   :class (if= [(model/get-filter) filter-type] "active")}
     (str/capitalize (name filter-type))])
 
 (defn item-filters []
