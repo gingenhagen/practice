@@ -1,15 +1,8 @@
 (ns reagent-todomvc.todo.footer
   (:require [reagent.core :as r]
             [reagent-todomvc.todo.model :as model]
-            [clojure.string :as str]))
-
-(defn if=
-  ([test-args then] (if (apply = test-args) then))
-  ([test-args then else] (if (apply = test-args) then else)))
-
-(defn if-not=
-  ([test-args then] (if-not (apply = test-args) then))
-  ([test-args then else] (if-not (apply = test-args) then else)))
+            [clojure.string :as str]
+            [reagent-todomvc.helpers.core-helper :refer [if= if-not=]]))
 
 (defn pluralize [count description]
   (str count " " description (if-not= [count 1] "s" "")))

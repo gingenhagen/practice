@@ -1,9 +1,7 @@
 (ns reagent-todomvc.todo.items
   (:require [reagent.core :as r]
-            [reagent-todomvc.todo.model :as model]))
-
-(defn input-editable [hash])
-
+            [reagent-todomvc.todo.model :as model]
+            [reagent-todomvc.helpers.event-helper :as e]))
 
 (defn item [item]
   (let [val (r/atom (:text item))
@@ -17,14 +15,14 @@
       (letfn [(on-change-completed [e]
                 (model/update-item!
                   (:id item)
-                  {:completed (-> e .-target .-checked)})
+                  {:completed (e/checked e)})
                 (.log js/console "on-change-completed"))
               (on-change-text [e]
-                (reset! val (-> e .-target .-value))
+                (reset! val (e/value e))
                 (.log js/console "on-change-text"))
               (on-key-up-text [e]
                 (case (.-key e)
-                  "Enter" (save-text (-> e .-target .-value))
+                  "Enter" (save-text (e/value e))
                   "Escape" (cancel-text)
                   :default)
                 (.log js/console "on-key-up-text"))
@@ -46,9 +44,6 @@
           [:div.text {:on-double-click on-double-click
                       :class (if @editing "editing")}
             [:span.readonly (:text item)]
-            [input-editable {:type "text", :value @val
-                             :on-change on-change-text
-                             :on-key-up on-key-up-text}]
             [^{:component-did-update
                  (fn [e]
                    (.log js/console "input-component-did-update"))
@@ -61,7 +56,6 @@
              (fn [] [:input.editable {:type "text", :value @val
                                          :on-change on-change-text
                                          :on-key-up on-key-up-text}])]]
-
           [:button {:type "button",
                     :on-click #(model/remove-item! (:id item))}
                    "X"]]))

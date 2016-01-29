@@ -1,5 +1,6 @@
 (ns reagent-todomvc.todo.model
-  (:require [reagent.core :as r]))
+  (:require [reagent.core :as r]
+            [reagent-todomvc.helpers.core-helper :refer [select-vals]]))
 
 (defonce ^:private items (r/atom {}))
 
@@ -21,9 +22,6 @@
 
 (defn- all-keys []
   (keys @items))
-
-(defn select-vals [map keyseq]
-  (vals (select-keys map keyseq)))
 
 (defn all []
   (select-vals @items (all-keys)))
