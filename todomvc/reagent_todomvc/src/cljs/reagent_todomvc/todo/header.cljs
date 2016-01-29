@@ -2,23 +2,18 @@
   (:require [reagent.core :as r]
             [reagent-todomvc.helpers.string-helper :as strh]
             [reagent-todomvc.todo.model :as model]
-            [reagent-todomvc.helpers.event-helper :as eh]))
+            [reagent-todomvc.helpers.event-helper :as eh]
+            [reagent-todomvc.helpers.component-helper :as ch]))
 
 (defn input []
   (let [val (r/atom "")
-        on-key-up (fn [e]
-                    (when (and (eh/key= e "Enter") (strh/not-blank? (eh/value e)))
-                      (model/add-item! (eh/trim-value e))
-                      (reset! val ""))
-                    #(true))
-        on-change (fn [e]
-                    (reset! val (eh/value e))
-                    #(true))]
-    [^{:component-did-mount (fn [c]
-                              (.focus (r/dom-node c))
-                              #(true))}
-     (fn [] [:input.input {:type "text", :value @val,
-                           :on-change on-change,
+        on-key-up #(when (and (eh/key= % "Enter") (strh/not-blank? (eh/value %)))
+                     (model/add-item! (eh/trim-value %))
+                     (reset! val ""))
+        on-change #(reset! val (eh/value %))]
+    [^{:component-did-mount #(ch/focus %)}
+     (fn [] [:input.input {:type "text", :value @val
+                           :on-change on-change
                            :on-key-up on-key-up}])]))
 
 (defn header []

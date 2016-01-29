@@ -9,9 +9,8 @@
   [:span (strh/pluralize (model/active-count) "item") " left"])
 
 (defn item-filter [filter-type]
-  [:button.filter {:type "button",
-                   :on-click #(model/set-filter! filter-type)
-                   :class (if= [(model/get-filter) filter-type] "active")}
+  [:button.filter {:type "button", :class (if= [(model/get-filter) filter-type] "active")
+                   :on-click #(model/set-filter! filter-type)}
     (str/capitalize (name filter-type))])
 
 (defn item-filters []
@@ -21,11 +20,13 @@
     (item-filter :completed)])
 
 (defn remove-completed []
-  (if (< 0 (model/completed-count))
-    [:button {:type "button", :on-click model/remove-completed!} "Remove completed"]))
+  (if (pos? (model/completed-count))
+    [:button {:type "button"
+              :on-click model/remove-completed!}
+             "Remove completed"]))
 
 (defn footer []
-  (if (< 0 (model/all-count))
+  (if (pos? (model/all-count))
     [:div.footer
       [items-left]
       [item-filters]

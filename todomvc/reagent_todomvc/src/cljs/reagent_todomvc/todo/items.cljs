@@ -12,17 +12,14 @@
     (fn [item]
       (letfn
         [(on-change-completed [e]
-           (model/update-item! (:id item) {:completed (eh/checked e)})
-           #(true))
+           (model/update-item! (:id item) {:completed (eh/checked e)}))
          (on-change-text [e]
-           (reset! val (eh/value e))
-           #(true))
+           (reset! val (eh/value e)))
          (on-key-up-text [e]
            (case (.-key e)
              "Enter" (save-text (eh/trim-value e))
              "Escape" (cancel-text)
-             :default)
-           #(true))
+             :default))
          (on-double-click []
            (if-not @editing (reset! editing true))
            #(true))
@@ -42,9 +39,7 @@
           [:div.text {:on-double-click on-double-click
                       :class (if @editing "editing")}
             [:span.readonly (:text item)]
-            [^{:component-did-mount (fn [c] ;component
-                                      (if @editing (ch/focus-input-end c))
-                                      #(true))}
+            [^{:component-did-mount #(if @editing (ch/focus-input-end %))}
              (fn [] [:input.editable {:type "text", :value @val
                                       :on-change on-change-text
                                       :on-key-up on-key-up-text
