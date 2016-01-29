@@ -3,6 +3,7 @@
             [clojure.string :as str]
             [reagent-todomvc.todo.model :as model]
             [reagent-todomvc.helpers.event-helper :as eh]
+            [reagent-todomvc.helpers.component-helper :as ch]
             [reagent-todomvc.helpers.reagent-helper :as rh :include-macros true]))
 
 (defn item [item]
@@ -42,9 +43,7 @@
                       :class (if @editing "editing")}
             [:span.readonly (:text item)]
             [^{:component-did-mount (fn [c] ;component
-                                      (when @editing
-                                        (.focus (r/dom-node c))
-                                        (set! (.-value (r/dom-node c)) (.-value (r/dom-node c))))
+                                      (if @editing (ch/focus-input-end c))
                                       #(true))}
              (fn [] [:input.editable {:type "text", :value @val
                                       :on-change on-change-text
