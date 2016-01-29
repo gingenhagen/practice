@@ -1,13 +1,14 @@
 (ns reagent-todomvc.todo.header
   (:require [reagent.core :as r]
+            [clojure.string :as str]
             [reagent-todomvc.todo.model :as model]
             [reagent-todomvc.helpers.event-helper :as eh]))
 
 (defn input []
   (let [val (r/atom "")
         on-key-up (fn [e]
-                    (when (eh/key= e "Enter")
-                      (model/add-item! (eh/value e))
+                    (when (and (eh/key= e "Enter") (not (str/blank? (eh/value e))))
+                      (model/add-item! (eh/trim-value e))
                       (reset! val ""))
                     #(true))
         on-change (fn [e]

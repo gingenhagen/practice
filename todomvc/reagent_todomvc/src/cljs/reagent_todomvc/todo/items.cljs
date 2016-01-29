@@ -1,5 +1,6 @@
 (ns reagent-todomvc.todo.items
   (:require [reagent.core :as r]
+            [clojure.string :as str]
             [reagent-todomvc.todo.model :as model]
             [reagent-todomvc.helpers.event-helper :as eh]
             [reagent-todomvc.helpers.reagent-helper :as rh :include-macros true]))
@@ -17,7 +18,7 @@
            #(true))
          (on-key-up-text [e]
            (case (.-key e)
-             "Enter" (save-text (eh/value e))
+             "Enter" (save-text (eh/trim-value e))
              "Escape" (cancel-text)
              :default)
            #(true))
@@ -25,8 +26,10 @@
            (if-not @editing (reset! editing true))
            #(true))
          (save-text [text]
-           (model/update-item! (:id item) {:text text})
-           (reset! editing false)
+           (when-not (str/blank? text)
+             (model/update-item! (:id item) {:text text})
+             (reset! val text)
+             (reset! editing false))
            #(true))
          (cancel-text []
            (reset! val (:text item))
