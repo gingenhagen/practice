@@ -11,7 +11,7 @@
 (defn item-filter [filter-type]
   [:button.filter {:type "button", :class (if= [(model/get-filter) filter-type] "active")
                    :on-click #(model/set-filter! filter-type)}
-    (str/capitalize (name filter-type))])
+                  (str/capitalize (name filter-type))])
 
 (defn item-filters []
   [:div.filters
