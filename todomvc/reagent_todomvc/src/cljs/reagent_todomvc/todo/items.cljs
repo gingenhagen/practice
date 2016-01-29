@@ -38,12 +38,11 @@
           [:div.text {:on-double-click on-double-click
                       :class (if @editing "editing")}
             [:span.readonly (:text item)]
-            [^{:component-did-mount
-                (fn [e]
-                  (when @editing
-                    (.focus (r/dom-node e))
-                    (set! (.-value (r/dom-node e)) (.-value (r/dom-node e))))
-                  #(true))}
+            [^{:component-did-mount (fn [c] ;component
+                                      (when @editing
+                                        (.focus (r/dom-node c))
+                                        (set! (.-value (r/dom-node c)) (.-value (r/dom-node c))))
+                                      #(true))}
              (fn [] [:input.editable {:type "text", :value @val
                                       :on-change on-change-text
                                       :on-key-up on-key-up-text

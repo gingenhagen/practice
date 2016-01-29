@@ -1,21 +1,24 @@
 (ns reagent-todomvc.todo.header
   (:require [reagent.core :as r]
             [reagent-todomvc.todo.model :as model]
-            [reagent-todomvc.helpers.event-helper :as e]))
+            [reagent-todomvc.helpers.event-helper :as eh]))
 
-(defn input-without-meta []
+(defn input []
   (let [val (r/atom "")
-        on-key-up #(when (e/key= % "Enter")
-                     (model/add-item! (e/value %))
-                     (reset! val ""))
-        on-change #(reset! val (e/value %))]
-    (fn [] [:input.input {:type "text", :value @val,
-                          :on-change on-change,
-                          :on-key-up on-key-up}])))
-
-
-(def input (with-meta input-without-meta
-             {:component-did-mount #(.focus (r/dom-node %))}))
+        on-key-up (fn [e]
+                    (when (eh/key= e "Enter")
+                      (model/add-item! (eh/value e))
+                      (reset! val ""))
+                    #(true))
+        on-change (fn [e]
+                    (reset! val (eh/value e))
+                    #(true))]
+    [^{:component-did-mount (fn [c]
+                              (.focus (r/dom-node c))
+                              #(true))}
+     (fn [] [:input.input {:type "text", :value @val,
+                           :on-change on-change,
+                           :on-key-up on-key-up}])]))
 
 (defn header []
   [:div.header
