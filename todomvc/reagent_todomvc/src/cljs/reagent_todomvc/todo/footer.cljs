@@ -2,13 +2,11 @@
   (:require [reagent.core :as r]
             [reagent-todomvc.todo.model :as model]
             [clojure.string :as str]
-            [reagent-todomvc.helpers.core-helper :refer [if= if-not=]]))
-
-(defn pluralize [count description]
-  (str count " " description (if-not= [count 1] "s" "")))
+            [reagent-todomvc.helpers.core-helper :refer [if=]]
+            [reagent-todomvc.helpers.string-helper :as strh]))
 
 (defn items-left []
-  [:span (pluralize (model/active-count) "item") " left"])
+  [:span (strh/pluralize (model/active-count) "item") " left"])
 
 (defn item-filter [filter-type]
   [:button.filter {:type "button",
