@@ -11,42 +11,43 @@
       (letfn
         [(on-change-completed [e]
            (model/update-item! (:id item) {:completed (eh/checked e)})
-           (.log js/console "on-change-completed"))
+           #(true))
          (on-change-text [e]
            (reset! val (eh/value e))
-           (.log js/console "on-change-text"))
+           #(true))
          (on-key-up-text [e]
            (case (.-key e)
              "Enter" (save-text (eh/value e))
              "Escape" (cancel-text)
              :default)
-           (.log js/console "on-key-up-text"))
+           #(true))
          (on-double-click []
            (if-not @editing (reset! editing true))
-           (.log js/console "on-double-click"))
+           #(true))
          (save-text [text]
            (model/update-item! (:id item) {:text text})
            (reset! editing false)
-           (.log js/console "save-text"))
+           #(true))
          (cancel-text []
            (reset! val (:text item))
            (reset! editing false)
-           (.log js/console "cancel-text"))]
+           #(true))]
         [:li.item {:class (if (:completed item) "completed")}
           [:input {:type "checkbox", :checked (:completed item)
                    :on-change on-change-completed}]
           [:div.text {:on-double-click on-double-click
                       :class (if @editing "editing")}
             [:span.readonly (:text item)]
-            [^{:component-did-update
-                #(.log js/console "input-component-did-update")
-               :component-did-mount
+            [^{:component-did-mount
                 (fn [e]
-                  (.focus (r/dom-node e))
-                  (.log js/console "input-component-did-mount"))}
+                  (when @editing
+                    (.focus (r/dom-node e))
+                    (set! (.-value (r/dom-node e)) (.-value (r/dom-node e))))
+                  #(true))}
              (fn [] [:input.editable {:type "text", :value @val
                                       :on-change on-change-text
-                                      :on-key-up on-key-up-text}])]]
+                                      :on-key-up on-key-up-text
+                                      :on-blur cancel-text}])]]
           [:button {:type "button",
                     :on-click #(model/remove-item! (:id item))}
                    "X"]]))))
